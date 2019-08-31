@@ -1,22 +1,11 @@
 <template>
     <el-container id="address-container">
         <el-main>
-            <!-- <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" style="padding-left:38%"> 
-                <el-menu-item index="0" @click="placestucture()">场景结构设置</el-menu-item>
-                <el-menu-item index="1" @click="placemember()" style="margin-left:10%">场景成员设置</el-menu-item>
-                <div id="buttongroup1" style="display:block">
-                    <el-button type="primary" size="mini" style="float:right;margin-top:12px">保存</el-button>
-                    <el-button type="primary" size="mini" style="float:right;margin-right:8px;margin-top:12px">同步组织机构</el-button>
-                </div>
-                <div id="buttongroup2" style="display:none">
-                    <el-button type="primary" size="mini" style="float:right;margin-top:12px">添加</el-button>
-                    <el-button type="danger" size="mini" style="float:right;margin-right:8px;margin-top:12px">批量移除</el-button>
-                </div>
-            </el-menu> -->
             <el-card id="card1">
                 <div class="organ-architecture">
                     <span class="attribute">场景——{{sceneTitle}} （属性设置）:</span> 
-                    <el-button type="primary" size="mini" style="float:right;margin-top:-32px">同步组织机构</el-button>
+                    <el-button size="mini" style="float:right;margin-top:-32px;margin-right:120px">同步组织机构</el-button>
+                    <el-button type="primary" size="mini" style="float:right;margin-top:-32px" @click="initialTree()">编辑组织机构</el-button>
                     <br>
                     <el-checkbox v-model="horizontal">横向/纵向</el-checkbox>
                     <el-checkbox v-model="collapsable">折叠</el-checkbox>
@@ -142,13 +131,39 @@
                 </el-form>
             </div>
         </el-dialog>
+
+        <!-- 编辑组织机构对话框 -->
+        <el-dialog :title="'编辑组织机构——'+sceneTitle" :visible.sync="dialogVisible2" width="1000px">
+            <!-- <span style="line-height:3;display:inline-block">{{title}}</span><br> -->
+            <tree-transfer 
+                class="treeTransfer"
+                :title="transferTitle" 
+                :from_data='fromData' 
+                :to_data='toData' 
+                :defaultProps="{label:'label'}" 
+                @addBtn='add' 
+                @removeBtn='remove' 
+                :mode='mode' 
+                height='540px' 
+                filter 
+                openAll>
+            </tree-transfer>
+            <span slot="footer" class="dialog-footer">
+                <el-button size="medium" @click="dialogVisible2 = false">取 消</el-button>
+                <el-button type="primary" size="medium" @click="toSave()" style="margin-right:20px">确 定</el-button>
+            </span>
+        </el-dialog>
     </el-container>
 </template>
 
 <script>
 import { options } from '@/icons/icon.json'
+import treeTransfer from 'el-tree-transfer' // 引入
 export default {
     name: 'organization-container',
+    components: {
+        treeTransfer
+    },
     data() {
         return{
             sceneTitle: '',
@@ -200,6 +215,17 @@ export default {
                     value: ''
                 }],
             },
+            //编辑组织机构对话框
+            //树形穿梭框新增组织部门
+            dialogVisible2: false,
+            transferTitle: ["组织架构","该场景组织部门"],
+            mode: "transfer", // transfer穿梭框模式  addressList通讯录模式
+            hardReset: false,
+            showTransfer: false,
+            title: '',
+            fromData: [],
+            toData: [],
+            allNodes: [],
             //card2
             tableData2: [],
             multipleSelection: [],
@@ -213,6 +239,7 @@ export default {
         this.$nextTick( function(){
             this.getOrganByScene(1)
             this.getOrganMember(1)
+            this.getMainTree(1)
         })
     },
     methods: {
@@ -402,7 +429,7 @@ export default {
                 }
             }
         },
-        //节点增删改查对话框--------------------------------------------------------------------
+        //节点增删改查对话框----------------------------------------------------------------------------------------------------------
         //是否显示编辑 
         showEdit() {
             console.log(this.edit)
@@ -487,6 +514,117 @@ export default {
                 else {
                     this.$message.error(res.data.msg);
                 }
+            }).catch( error => {
+                console.log()
+            })
+        },
+
+        //编辑组织机构对话框-----------------------------------------------------------------------------------------------------------------------------
+        initialTree() {
+            this.getMainTree()
+            this.dialogVisible2=true
+        },
+        //得到主组织树
+        getMainTree() {
+            var Params = {}
+            var Params2 ={
+                Authorization: this.$store.state.user.token
+            }
+            this.$ajax({
+                url:'/dev-api/organ/mainTree',
+                method: 'get',
+                contentType: "application/json; charset=utf-8",
+                params: Params,
+                headers: Params2
+            }).then( res => {
+                if(res.data.obj) {
+                    this.fromData[0] = res.data.obj
+                    this.fromData[0] = JSON.parse(JSON.stringify(this.fromData[0]).replace(/unitName/g, 'label'))
+                    this.fromData[0] = JSON.parse(JSON.stringify(this.fromData[0]).replace(/parentId/g, 'pid'))
+                    console.log("formData",this.fromData)
+                    console.log("data",this.data)
+                    if(Object.keys(this.data).length != 0) {
+                        this.toData[0] = this.data
+                    }
+                    else
+                        this.$message.error("加载场景失败")
+                }
+                else {
+                    this.$message.error('后台系统错误');
+                }
+            }).catch( error => {
+                console.log()
+            })
+        },
+       // 切换模式 现有树形穿梭框模式transfer 和通讯录模式addressList
+        changeMode() {
+            if (this.mode == "transfer") {
+                this.mode = "addressList";
+            } else {
+                this.mode = "transfer";
+            }
+        },
+        // 监听穿梭框组件添加
+        add(fromData,toData,obj){
+            // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的{keys,nodes,halfKeys,halfNodes}对象
+            // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
+            // console.log("fromData:", fromData);
+            // console.log("toData:", toData);
+            // console.log("obj:", obj);
+            for(var i=0;i<obj.keys.length;i++)
+				this.allNodes.push(obj.keys[i])
+			for(var j=0;j<obj.harfKeys.length;j++)
+				this.allNodes.push(obj.harfKeys[j])
+			this.allNodes = this.unique(this.allNodes)
+			console.log(this.allNodes)
+        },
+        // 监听穿梭框组件移除
+        remove(fromData,toData,obj){
+            // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的{keys,nodes,halfKeys,halfNodes}对象
+            // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
+            // console.log("fromData:", fromData);
+            // console.log("toData:", toData);
+            // console.log("obj:", obj);
+            var removeNode = []
+			for(var i=0;i<obj.keys.length;i++)
+				removeNode.push(obj.keys[i])
+			console.log(removeNode)
+			this.allNodes = this.allNodes.filter(function(v){ return removeNode.indexOf(v) == -1 })
+			console.log(this.allNodes)
+        },
+        //数组去重
+		unique(arr){
+			var hash=[];
+			for (var i = 0; i < arr.length; i++) {
+				if(arr.indexOf(arr[i])==i){
+				hash.push(arr[i]);
+				}
+			}
+			return hash;
+		},
+        //保存穿梭框
+        toSave() {
+            this.dialogVisible2 = false
+            console.log(this.allNodes)
+            var Params = {
+                sceneId: this.sceneId,
+                treeIds: this.allNodes.join(",")
+            }
+			var Params2 = {
+                Authorization: this.$store.state.user.token
+            }
+            console.log(Params)
+            this.$ajax({
+                url:'/dev-api/scene/node/add',
+                method: 'post',
+                contentType: "application/json; charset=utf-8",
+				params: Params,
+				headers: Params2
+            }).then( res => {
+                if(res.data.status==200)
+                    this.$message.success("编辑组织部门成功")
+                else 
+                    this.$message.error(res.data.msg)
             }).catch( error => {
                 console.log()
             })
@@ -665,6 +803,13 @@ export default {
 }
 .bg-tomato {
     background-color: tomato;
+}
+/* 编辑组织机构 */
+#address-container .transfer-left {
+	margin-left: 20px;
+}
+#address-container .transfer-right {
+	margin-right: 20px;
 }
 </style>
 

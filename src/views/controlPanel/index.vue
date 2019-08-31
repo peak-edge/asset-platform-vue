@@ -172,9 +172,9 @@ export default {
 	height: 100vh;
 	.Title1 {
 		background:rgb(32,34,42);
-		width:219px;
+		// width:220px;
 		height:55px;
-		border-bottom: 2px rgb(6,7,8) solid;
+		border-bottom: 1.5px rgb(6,7,8) solid;
 		span {
 			display: block;
 			text-align: center;
@@ -187,9 +187,9 @@ export default {
 	}
 	.Title2 {
 		background:rgb(32,34,42);
-		width:219px;
+		// width:220px;
 		height:55px;
-		border-bottom: 2px rgb(6,7,8) solid;
+		border-bottom: 1.5px rgb(6,7,8) solid;
 		display: block;
 		text-align: center;
 		font-size: 18px;

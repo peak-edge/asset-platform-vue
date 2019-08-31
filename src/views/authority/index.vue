@@ -2,21 +2,26 @@
     <el-container id="authority_container">
         <el-aside width="250px">
             <!-- 角色按钮 -->
-            <div class="button-group" style="margin:15px 0 15px 27px;">
-                <el-button size="mini" type="primary" @click="dialogAddRole = true" style="margin-right:10px">新建角色</el-button>
-                <el-button size="mini" type="primary">新建角色组</el-button>
+            <div class="button-group" style="margin:15px 0 10px 16px;">
+                <el-button size="mini" type="primary" @click="dialogAddRole = true" style="margin-right:4px;padding:7px 22px 7px 22px">新建角色</el-button>
+                <el-button size="mini" type="primary" style="padding:7px 22px 7px 22px">新建角色组</el-button>
             </div>
-            <el-input placeholder="搜索角色" v-model="searchInput" size="medium" style="width:220px;margin-left:15px">
+            <el-input placeholder="搜索角色" v-model="searchInput" size="medium" style="width:220px;margin-left:15px;margin-bottom:10px">
                 <i slot="suffix" class="el-input__icon el-icon-search"></i>
             </el-input>
             <!-- 显示角色列表 -->
-            <el-menu v-for="(item,index) in rolelist" :key="index">
+            <el-menu 
+                v-for="(item,index) in rolelist" 
+                :key="index" 
+                :default-openeds="['0','1','2','3','4']"
+                :default-active="activemenu"
+                @select="handleSelect">
                 <el-submenu :index="String(index)">
                     <template slot="title">
                         <i class="el-icon-coordinate"></i>
                         <span>{{item.roleGroupName}}</span>
                     </template> 
-                    <el-menu-item v-for="(role,index) in item.sceneRoles" :key="index" @click="getResourceHaveList(item,role)">
+                    <el-menu-item v-for="(role,index2) in item.sceneRoles" :key="index2" :index="String(index)+String(index2)" @click="getResourceHaveList(item,role)">
                         {{role.roleNameZh}}
                     </el-menu-item>
                 </el-submenu>
@@ -109,12 +114,13 @@
                     :header-cell-style="tableHeaderColor"
                     @selection-change="handleSelectionChange">
                     <el-table-column type="selection" width="60"></el-table-column>
-                    <el-table-column prop="roleNameZh" label="成员名称" width="140"></el-table-column>
-                    <el-table-column prop="roleName" label="成员名称（英）" width="180"></el-table-column>
-                    <el-table-column prop="id" label="成员ID" width="110"></el-table-column>
-                    <el-table-column prop="groupId" label="分组ID" width="110"></el-table-column>
-                    <el-table-column prop="createdTime" label="创建时间" min-width="140"></el-table-column>
-                    <el-table-column prop="roleDescription" label="备注" min-width="140"></el-table-column>
+                    <el-table-column prop="realName" label="成员名称" width="140"></el-table-column>
+                    <el-table-column prop="accountName" label="成员名称（英）" width="160"></el-table-column>
+                    <el-table-column prop="id" label="成员ID" width="380"></el-table-column>
+                    <el-table-column prop="createdTime" label="创建时间" width="200"></el-table-column>
+                    <el-table-column prop="userEmail" label="成员邮箱" min-width="200"></el-table-column>
+                    <el-table-column prop="userAddress" label="成员地址" min-width="200"></el-table-column>
+                    <el-table-column prop="userBirthday" label="成员生日" width="200"></el-table-column>
                 </el-table>
             </el-card>
         </el-main>
@@ -149,6 +155,9 @@ export default {
     name: 'topbar',
     data() {
         return {
+            activemenu: '00',
+            // activeKey: ['0','00'],
+            checkedRoleId: '', //选中的角色
             searchInput: '',
             dialogAddNumber: false,
             dialogAddRole: false,
@@ -196,12 +205,15 @@ export default {
                     this.rolelist=[]
                     this.rolelist = res.data.obj;
                     console.log(this.rolelist)
-                    this.tableData = []
-                    for(var i=0;i<this.rolelist.length;i++) {
-                        for(var j=0;j<this.rolelist[i].sceneRoles.length;j++)
-                        this.tableData.push(this.rolelist[i].sceneRoles[j])
-                    }
-                    console.log(this.tableData)
+                    console.log(this.rolelist[0].sceneRoles[0].id)
+                    this.checkedRoleId = this.rolelist[0].sceneRoles[0].id
+                    this.roleMemberList()
+                    // this.tableData = []
+                    // for(var i=0;i<this.rolelist.length;i++) {
+                    //     for(var j=0;j<this.rolelist[i].sceneRoles.length;j++)
+                    //     this.tableData.push(this.rolelist[i].sceneRoles[j])
+                    // }
+                    // console.log(this.tableData)
                 }
                 else {
                     this.$message.error(res.data.msg)
@@ -209,6 +221,15 @@ export default {
             }).catch( error => {
                 console.log()
             })
+        },
+        //得到导航栏的选中信息
+        handleSelect(key, keyPath) {
+            // console.log(this.activemenu)
+            this.activemenu=key
+            console.log(this.activemenu)
+            console.log(key, keyPath);
+            // this.activeKey = keyPath;
+            // this.getRoleList();
         },
         //得到选中的应用权限信息
         toAuthority(item,index) {
@@ -230,18 +251,10 @@ export default {
                 params: Params,
                 headers: Params2
             }).then( res => {
-                console.log(res)
                 if(res.data.code==200) {
                     console.log("aaa")
                     this.authoritylist = res.data.data
                     console.log(this.authoritylist)
-                    // for(var i=0;i<this.authoritylist.length;i++) {
-                    //     this.tableData1[i].applyname = this.authoritylist
-                    // }
-                    // console.log(this.authoritylist[0].children)
-                    // for(var i=0;i<this.authoritylist[0].children.length;i++) {
-                    //     this.tableData1[i].formname = this.authoritylist[0].children[i].name
-                    // }
                     this.applist = []
                     for(var number=0;number<this.authoritylist.length;number++) {
                         var obj = {}
@@ -252,10 +265,6 @@ export default {
                     }
                     console.log(this.applist)
 
-                    // if(!index)
-                    //     index = 0
-                    // console.log("ppppppppppppppppppppppppppppppppp"+index)
-                    // console.log(this.authoritylist)
                     var obj = {}
                     var objtotle = []
                     for(var i=0;i<this.authoritylist[index].children.length;i++) {
@@ -289,8 +298,6 @@ export default {
                     this.tableData1 = objtotle
                     console.log(this.tableData1)
                     this.getSpanArr(this.tableData1)
-                        // obj[i].formname = []
-                    // this.tableData1[0].applyname = this.authoritylist[0].name
                 }
                 else {
                     this.$message.error(res.data.msg)
@@ -322,6 +329,8 @@ export default {
         },
         //获取资源（已有的角色权限设置列表）
         getResourceHaveList(item,role) {
+            this.checkedRoleId = role.id
+            this.roleMemberList()
             var Params = {
                 roleId: role.id,
             }
@@ -358,6 +367,7 @@ export default {
                 }
             }
         },
+        //知道合并的行数
         getSpanArr(data) {　
             for (var i = 0; i < data.length; i++) {
                 if (i === 0) {
@@ -441,6 +451,33 @@ export default {
         },
         //card2---------------------------------------------------------------------------------------------------------------------------
         //card2的选中框
+        roleMemberList() {
+            var Params = {
+                roleId: this.checkedRoleId,
+            }
+            var Params2 ={
+                Authorization: this.$store.state.user.token
+            }
+            console.log(Params)
+            this.$ajax({
+                url:'/dev-api/scene/role/users/'+ this.checkedRoleId,
+                method: 'get',
+                contentType: "application/json; charset=utf-8",
+                params: Params,
+                headers: Params2
+            }).then( res => {
+                console.log(res)
+                if(res.data.status==200) {
+                    console.log(res.data.obj)
+                    this.tableData = res.data.obj
+                }
+                else {
+                    this.$message.error(res.data.msg)
+                }
+            }).catch( error => {
+                console.log()
+            })
+        },
         handleSelectionChange(val) {
             this.multipleSelection = val;
         },
@@ -448,9 +485,9 @@ export default {
             await this.$store.dispatch('user/logout')
             this.$router.push(`/login?redirect=${this.$route.fullPath}`)
         },
-        handleSelect(key, keyPath) {
-            console.log(key, keyPath);
-        },
+        // handleSelect(key, keyPath) {
+        //     console.log(key, keyPath);
+        // },
         handleClick() {
 
         },

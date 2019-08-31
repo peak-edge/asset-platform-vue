@@ -87,7 +87,7 @@ export default {
         return {
             loginForm: {
                 // accountName: 'admin',
-                accountName: 'test',
+                accountName: 'chenxu',
                 pwd: '123'
             },
             loginRules: {

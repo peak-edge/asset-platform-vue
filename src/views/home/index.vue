@@ -572,9 +572,14 @@ export default {
                 contentType: "application/json; charset=utf-8",
                 params: Params
             }).then( res => {
-                console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
-                console.log(res.data.obj)
-                this.myflowlist = res.data.obj
+                console.log(res)
+                if(res.data.code==200) {
+                    console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
+                    this.myflowlist = res.data.obj
+                }
+                else
+                    this.$message.error(res.data.msg)
+                // console.log()
             }).catch( error => {
                 console.log()
             })
@@ -771,7 +776,7 @@ export default {
         .button2{
             margin-left:0px;
             margin-top:5px;
-            width:140px;
+            min-width:140px;
             height:50px;
             border: white;
             font-size:15px;

@@ -22,7 +22,7 @@
                 </el-form-item>
                 <el-form-item style="float:right">
                     <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-                        <el-button icon="el-icon-refresh" type="info" circle @click="clearAll();getPlatformRoleList()"></el-button>
+                        <el-button icon="el-icon-refresh" type="info" circle @click="clearAll();getBusinessRoleList()"></el-button>
                     </el-tooltip>
                     <el-tooltip class="item" effect="dark" content="显隐" placement="top">
                         <el-button icon="el-icon-menu" type="warning" circle></el-button>
@@ -48,16 +48,24 @@
                     :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
                     <el-table-column type="selection" width="55" align="center"></el-table-column>
                     <el-table-column type="index" width="50" align="center"></el-table-column>
-                    <el-table-column prop="roleNameZh" label="角色名称" min-width="220"></el-table-column>
-                    <el-table-column prop="roleName" label="角色别名" sortable min-width="220"></el-table-column>
-                    <el-table-column prop="sort" label="角色排序" min-width="180"></el-table-column>
+                    <el-table-column prop="roleNameZh" label="角色名称" min-width="140"></el-table-column>
+                    <el-table-column prop="roleName" label="角色别名" sortable min-width="160"></el-table-column>
+                    <el-table-column prop="id" label="角色ID" width="120"></el-table-column>
+                    <el-table-column prop="sort" label="角色类型" min-width="120"></el-table-column>
+                    <el-table-column prop="sceneName" label="场景名称" min-width="120"></el-table-column>
+                    <el-table-column prop="roleDescription" label="描述" min-width="120"></el-table-column>
                     <el-table-column label="操作" fixed="right" align="center" min-width="230">
                         <template slot-scope="scope">
+                        <!-- <el-button
+                            size="mini"
+                            type="text"
+                            icon="el-icon-view"
+                            @click="handleSee(scope.$index, scope.row)">查看</el-button> -->
                         <el-button
                             size="mini"
                             type="text"
                             icon="el-icon-view"
-                            @click="handleSee(scope.$index, scope.row)">查看</el-button>
+                            @click="handleMember(scope.$index, scope.row)">角色成员</el-button>
                         <el-button
                             size="mini"
                             type="text"
@@ -128,6 +136,44 @@
 				<el-button size="medium" @click="dialogFormVisible2 = false">取 消</el-button>
 			</div>
 		</el-dialog>
+
+        <!-- 查看角色成员弹出框 -->
+        <el-dialog title="角色成员" :visible.sync="dialogFormVisible3" width="1000px">
+			<el-table 
+                :data="tableData2" 
+                :header-cell-style="tableHeaderColor"
+                ref="multipleTable"
+                style="width: 100%; min-height:450px" 
+                border
+                size="small">
+                <el-table-column type="index" width="50" align="center"></el-table-column>
+                <el-table-column prop="accountName" label="账号名称" min-width="90"></el-table-column>
+                <el-table-column prop="realName" label="真实名称" min-width="100"></el-table-column>
+                <el-table-column prop="id" label="成员ID" min-width="280"></el-table-column>
+                <!-- <el-table-column prop="staffId" label="职业ID" min-width="200"></el-table-column>
+                <el-table-column prop="roleId" label="角色ID" width="200"></el-table-column> -->
+                <el-table-column prop="createdTime" label="创建时间" sortable min-width="160"></el-table-column>
+                <!-- <el-table-column prop="other" label="描述(性别、生日、邮箱、地址等)" min-width="160"></el-table-column> -->
+                <el-table-column label="操作" fixed="right" align="center" min-width="120">
+                    <template slot-scope="scope">
+                    <el-button
+                        size="mini"
+                        type="text"
+                        icon="el-icon-edit"
+                        @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-button
+                        size="mini"
+                        type="text"
+                        icon="el-icon-delete"
+                        @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <div slot="footer" class="dialog-footer">
+				<el-button type="primary" size="medium" @click="getCheckedNodes">添加成员</el-button>
+				<el-button size="medium" @click="dialogFormVisible3 = false">取 消</el-button>
+			</div>
+		</el-dialog>
     </div>
 </template>
 
@@ -172,19 +218,23 @@ export default {
 				label: 'name'
             },
             defaultObj: [],
+            //查看角色成员弹出框
+            dialogFormVisible3: false,
+            tableData2: [],
         }
     },
     mounted() {
         this.$nextTick( function(){
-			this.getPlatformRoleList(1)
+            this.getBusinessRoleList(1)
+            this.getRoleMember(1)
         })
     },
     methods: {
-        //得到平台角色的列表
-		getPlatformRoleList() {
+        //得到业务角色管理的列表
+		getBusinessRoleList() {
             var Params = {
-                roleNameZh: this.formInline.roleNameZh,
-                roleName: this.formInline.roleName,
+                // roleNameZh: this.formInline.roleNameZh,
+                // roleName: this.formInline.roleName,
                 page: this.currentPage,
                 size: this.pageSize
             }
@@ -192,22 +242,43 @@ export default {
                 Authorization: this.$store.state.user.token
             }
             this.$ajax({
-                url:'/dev-api/sys/role/list',
+                url:'/dev-api/scene/role/list/all',
                 method: 'get',
                 contentType: "application/json; charset=utf-8",
                 params: Params,
                 headers: Params2
             }).then( res => {
                 console.log(res)
+                console.log("hhhhhhhhhhhhhhhhhhhhhhhh")
                 this.roleTotal = res.data.data.total
 				this.tableData = res.data.data.list
             }).catch( error => {
                 console.log()
             })
         },
+        //通过角色获取角色成员
+        getRoleMember() {
+            var Params = {
+                roleId: '54'
+            }
+            var Params2 ={
+                Authorization: this.$store.state.user.token
+            }
+            this.$ajax({
+                url:'/dev-api/scene/role/users/54',
+                method: 'get',
+                contentType: "application/json; charset=utf-8",
+                params: Params,
+                headers: Params2
+            }).then( res => {
+                console.log(res)
+            }).catch( error => {
+                console.log()
+            })
+        },
         //根据菜单名称和菜单编号模糊搜索
         onSearch() {
-            this.getPlatformRoleList()
+            this.getBusinessRoleList()
         },
         //清空按钮
         clearAll() {
@@ -300,6 +371,30 @@ export default {
 			this.form = obj
 			this.disabled = true
         },
+        handleMember(index, row) {
+            console.log(index, row)
+            // this.rowinfo = row
+            this.dialogFormVisible3 = true
+            var Params = {
+                roleId: row.id
+            }
+            var Params2 ={
+                Authorization: this.$store.state.user.token
+            }
+            this.$ajax({
+                url:'/dev-api/scene/role/users/'+row.id,
+                method: 'get',
+                contentType: "application/json; charset=utf-8",
+                params: Params,
+                headers: Params2
+            }).then( res => {
+                console.log(res)
+                this.tableData2 = res.data.obj
+            }).catch( error => {
+                console.log()
+            })
+
+        },
         handleEdit(index, row) {
 			console.log(index, row);
             this.rowinfo = row
@@ -335,7 +430,7 @@ export default {
 				console.log(res)
 				if(res.data.status==200) {
 					this.$message.success("删除平台角色成功")
-					this.getPlatformRoleList()
+					this.getBusinessRoleList()
 				}
 				else
 					this.$message.error(res.data.msg)
@@ -362,12 +457,12 @@ export default {
         handleSizeChange(val) {
             console.log(`每页 ${val} 条`);
             this.pageSize = val
-            this.getPlatformRoleList()
+            this.getBusinessRoleList()
         },
         handleCurrentChange(val) {
             console.log(`当前页: ${val}`);
             this.currentPage = val
-            this.getPlatformRoleList()
+            this.getBusinessRoleList()
         },
 
         //第一个dialog对话框----------------------------------------------------------------------------------------------------
@@ -406,7 +501,7 @@ export default {
                             if(res.data.status==200) {
                                 this.$message.success("新增平台角色成功")
                                 this.dialogFormVisible = false
-                                this.getPlatformRoleList()
+                                this.getBusinessRoleList()
                             }
                             else
                                 this.$message.error(res.data.msg)
@@ -437,7 +532,7 @@ export default {
                             if(res.data.status==200) {
                                 this.$message.success("编辑平台角色成功")
                                 this.dialogFormVisible = false
-                                this.getPlatformRoleList()
+                                this.getBusinessRoleList()
                             }
                             else
                                 this.$message.error(res.data.msg)

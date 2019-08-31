@@ -221,9 +221,9 @@ export default {
                 headers: Params2
             }).then( res => {
                 console.log(res)
-                if(res.data.status==200) {
-                    this.Total = res.data.obj.total
-                    this.tableData = res.data.obj.list
+                if(res.data.code==200) {
+                    this.Total = res.data.data.total
+                    this.tableData = res.data.data.list
                     this.options4 = []
                     for(var i=0;i<this.tableData.length;i++) {
                         var obj = {}

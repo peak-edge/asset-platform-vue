@@ -28,8 +28,8 @@
                 <el-menu 
                     v-for="(item,index) in formlist" 
                     :key="index" 
-                    :default-openeds="['0','1']"
-                    default-active="00"
+                    :default-openeds="['0','1','2','3','4']"
+                    :default-active="activemenu"
                     @select="handleSelect">
                     <el-submenu :index="String(index)">
                         <template slot="title">
@@ -204,7 +204,8 @@ export default {
                 "ss5",
                 "ss6",
                 "ss7"
-            ]
+            ],
+            activemenu: '00'
         }
     },
     created () {
@@ -293,6 +294,8 @@ export default {
         },
         //得到导航栏的选中信息
         handleSelect(key, keyPath) {
+            // console.log(this.activemenu)
+            this.activemenu=key
             console.log(key, keyPath);
             this.activeKey = keyPath;
             this.getFormList();
@@ -351,7 +354,7 @@ export default {
                 var Params2 = {
                     app_id: this.ybyid,
                     group_id: -1,
-                    form_status: -1
+                    form_status: 0
                 }
                 console.log(Params)
                 this.$ajax({
@@ -447,7 +450,7 @@ export default {
                         data: Params
                     }).then( res => {
                         console.log(res)
-                        if(res.data.status == 200) {
+                        if(res.data.code == 200) {
                             this.$message.success("发布成功")
                             this.dialogVisible = true
                             this.getFormInfo()

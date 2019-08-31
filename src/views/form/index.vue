@@ -26,7 +26,7 @@
             <el-main>
                 <transition>
                     <keep-alive v-if="isReloadAlive">
-                        <router-view :apptitle="apptitle" :appicon="appicon" :appid="appid" :appybyid="appybyid" :formName="formName" :formid="formid" :formjson="formjson"></router-view>
+                        <router-view :apptitle="apptitle" :appicon="appicon" :appid="appid" :appybyid="appybyid" :group="group" :formName="formName" :formid="formid" :formjson="formjson"></router-view>
                     </keep-alive>
                 </transition>
             </el-main>
@@ -43,6 +43,7 @@ export default {
             appicon: '',
             appid: '',
             appybyid: '',
+            group: '',
             formName: '',
             formid: '',
             formjson: '',
@@ -66,6 +67,7 @@ export default {
             const routerParamsicon = this.$route.query.appicon
             const routerParamsid = this.$route.query.appid
             const routerParamsybyid = this.$route.query.appybyid
+            const routerParamsgroup = this.$route.query.group
             const routerParamsformname = this.$route.query.formName
             const routerParamsformid = this.$route.query.formid
             const routerParamsjson = this.$route.query.formjson
@@ -73,6 +75,7 @@ export default {
             this.appicon = routerParamsicon;
             this.appid = routerParamsid;
             this.appybyid = routerParamsybyid;
+            this.group = routerParamsgroup
             this.formName = routerParamsformname
             this.formid = routerParamsformid
             this.formjson = routerParamsjson;

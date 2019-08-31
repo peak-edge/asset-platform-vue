@@ -31,10 +31,14 @@
                 <el-button @click="dialogVisible2 = true" style="margin-left:20px;"><i class="el-icon-plus"></i>分组</el-button>
             </div>
             <div class="formcard" v-for="(item, index) in formlist" :key="index">
+                <br><br><br>
+                <!-- <br>
+                <br>
+                <br v-if="item.children.length!=0"> -->
                 <p style="margin-left: 5px">{{item.name}}</p>
                 <div v-if="item.children.length!=0">
                     <el-card 
-                        @click.native="addform2(title,icon,id,ybyid,item.groupName,item.formName,item.id,item.formjson,form)"
+                        @click.native="addform2(title,icon,id,ybyid,item.id,item.formName,item.id,item.formjson,form)"
                         v-for="(form, index) in item.children" :key="index">
                         <svg-icon v-rainbow icon-class="icon-Financial_025"/>&nbsp;
                         {{form.name}}
@@ -319,13 +323,13 @@ export default {
             })
         },
         //跳转至编辑表单
-        addform2(title,icon,id,ybyid,groupname,formName,formid,formjson,form) {
-            console.log(title,icon,id,ybyid,groupname,formName,formid,formjson,form)
+        addform2(title,icon,id,ybyid,group,formName,formid,formjson,form) {
+            console.log(title,icon,id,ybyid,group,formName,formid,formjson,form)
             // console.log(title,icon,id,ybyid,groupname,formName,formid,formjson)
             var Params = {
                 app_id: ybyid,
                 group_id: -1,
-                form_status: -1
+                form_status: 0
             }
             console.log(Params)
             this.$ajax({
@@ -341,10 +345,10 @@ export default {
                         if(res.data.obj[i].formName == form.name) {
                             formName = res.data.obj[i].formName
                             formid = res.data.obj[i].id
-                            formjson = res.data.obj[i].modelSheetStr
+                            formjson = res.data.obj[i].modelSheet
                         }
                     }
-                    console.log(title,icon,id,ybyid,groupname,formName,formid,formjson)
+                    console.log(title,icon,id,ybyid,group,formName,formid,formjson)
                     this.$router.push({ 
                         path: '/form',
                         query: {
@@ -352,6 +356,7 @@ export default {
                             appicon:icon,
                             appid:id,
                             appybyid: ybyid,
+                            group: group,
                             formName:formName,
                             formid:formid,
                             formjson:formjson,
@@ -379,7 +384,8 @@ export default {
                 contentType: "application/json; charset=utf-8",
                 data: Params
             }).then( res => {
-                if(res.data.status==200) {
+                console.log(res)
+                if(res.data.code==200) {
                     this.$message.success("新建应用成功")
                     // this.getYbyAppList()
                     // this.newAppSetting()
@@ -403,6 +409,7 @@ export default {
                         }
                         console.log(this.ybyapplist)
                         this.newAppSetting()
+                        this.reload()
                     }).catch( error => {
                         console.log()
                     })
@@ -625,7 +632,7 @@ export default {
             color: #555;
         }
         .buttongroup {
-            padding-bottom: 70px;
+            // padding-bottom: 70px;
             .el-button {
                 color: #409EFF;
                 border: #f3f5f8;
