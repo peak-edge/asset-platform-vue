@@ -10,7 +10,7 @@
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" icon="el-icon-search" @click="onSearch()">搜索</el-button>
-                    <el-button icon="el-icon-refresh-left" @click="clearAll()">清空</el-button>
+                    <el-button icon="el-icon-refresh-left" @click="clearAll();onSearch()">清空</el-button>
                 </el-form-item>
             </el-form>
             <el-form :inline="true" :model="formInline2" class="demo-form-inline2" size="small">
@@ -18,14 +18,14 @@
                     <el-button type="primary" @click="newAdd()"><i class="el-icon-plus"></i> 新增</el-button>
                     <el-button type="danger" @click="deleteAll()"><i class="el-icon-delete"></i> 删除</el-button>
                     <el-button @click="dialogAuthority()"><i class="el-icon-setting"></i> 权限设置</el-button>
-                    <el-button type="warning" @click="exportExcel()"><i class="el-icon-download"></i> 导出excel</el-button>
+                    <el-button type="warning" @click="exportExcel()" disabled><i class="el-icon-download"></i> 导出excel</el-button>
                 </el-form-item>
                 <el-form-item style="float:right">
                     <el-tooltip class="item" effect="dark" content="刷新" placement="top">
                         <el-button icon="el-icon-refresh" type="info" circle @click="clearAll();getPlatformRoleList()"></el-button>
                     </el-tooltip>
                     <el-tooltip class="item" effect="dark" content="显隐" placement="top">
-                        <el-button icon="el-icon-menu" type="warning" circle></el-button>
+                        <el-button icon="el-icon-menu" type="warning" circle disabled></el-button>
                     </el-tooltip>
                     <el-tooltip class="item" effect="dark" content="搜索" placement="top">
                         <el-button icon="el-icon-search" type="success" circle @click="hideSearchItem()"></el-button>
@@ -333,7 +333,7 @@ export default {
                 headers: Params2
             }).then( res => {
 				console.log(res)
-				if(res.data.status==200) {
+				if(res.data.code==200) {
 					this.$message.success("删除平台角色成功")
 					this.getPlatformRoleList()
 				}
@@ -403,7 +403,7 @@ export default {
                             headers: Params2
                         }).then( res => {
                             console.log(res)
-                            if(res.data.status==200) {
+                            if(res.data.code==200) {
                                 this.$message.success("新增平台角色成功")
                                 this.dialogFormVisible = false
                                 this.getPlatformRoleList()
@@ -434,7 +434,7 @@ export default {
                             headers: Params2
                         }).then( res => {
                             console.log(res)
-                            if(res.data.status==200) {
+                            if(res.data.code==200) {
                                 this.$message.success("编辑平台角色成功")
                                 this.dialogFormVisible = false
                                 this.getPlatformRoleList()

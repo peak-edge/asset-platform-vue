@@ -13,7 +13,7 @@
 			<!-- 用户类型 -->
 			<el-form-item prop="usertype" label="用户类型 :">
 				<el-select v-model="registerForm.usertype" placeholder="请选择身份" style="width:300px">
-					<el-option label="管理员" value="1"></el-option>
+					<el-option label="管理员" value="1" disabled></el-option>
 					<el-option label="普通用户" value="2"></el-option>
 				</el-select>
 			</el-form-item>
@@ -77,7 +77,7 @@ export default {
         };
         return {
             registerForm: {
-				usertype:'',
+				usertype:'2',
 				useraccount: '',
 				realname:'',
 				password: '',

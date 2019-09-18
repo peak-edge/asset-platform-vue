@@ -578,7 +578,15 @@ let svgStr2=`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
     response.data.stencils[8].title='抄送节点'
     response.data.stencils[8].view=svgStr2 
     response.data.stencils[8].propertyPackages=response.data.stencils[6].propertyPackages;
-   
+    response.data.stencils[7].propertyPackages.push('servicetaskdelegateexpressionpackage');
+    response.data.stencils[7].propertyPackages.push('servicetaskclasspackage');
+    response.data.stencils[7].propertyPackages.push('multiinstance_typepackage');
+    response.data.stencils[7].propertyPackages.push('servicetaskexpressionpackage');
+
+     response.data.stencils[8].propertyPackages.push('servicetaskdelegateexpressionpackage');
+    response.data.stencils[8].propertyPackages.push('servicetaskclasspackage');
+    response.data.stencils[8].propertyPackages.push('multiinstance_typepackage');
+    response.data.stencils[8].propertyPackages.push('servicetaskexpressionpackage');
 
        for(let i=0;i<response.data.stencils.length;i++){
             if(!response.data.stencils[i].index){
@@ -594,7 +602,7 @@ let svgStr2=`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
                         response.data.propertyPackages[i].properties[0].title='完成时间'
          }
         if(response.data.propertyPackages[i].name=='multiinstance_conditionpackage'){
-                        response.data.propertyPackages[i].properties[0].title='是否签到'
+                        response.data.propertyPackages[i].properties[0].title='会签节点'
                         response.data.propertyPackages[i].properties[0].type='Boolean'
          }
          if(response.data.propertyPackages[i].name=='multiinstance_cardinalitypackage'){

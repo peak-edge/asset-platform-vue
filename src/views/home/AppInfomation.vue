@@ -1,6 +1,7 @@
 <template>
     <el-container class="home-container">
         <el-header>
+            <el-button class="backbutton" @click="toHome()"><i class="el-icon-back" style="font-size:20px"></i></el-button>
             <svg-icon :icon-class="appicon"/>
             <span>{{appname}}</span>
             <el-dropdown placement="bottom-start" style="width:40px;">
@@ -69,15 +70,15 @@
                         :data="tableData"
                         style="width: 100%"
                         :default-sort = "{prop: 'date', order: 'descending'}">
-                        <el-table-column type="index" width="50"></el-table-column>
-                        <el-table-column prop="procInstName" label="实例名称" min-width="140"></el-table-column>
-                        <el-table-column prop="procInstId" label="实例ID" min-width="360"></el-table-column>
+                        <el-table-column type="index" width="40"></el-table-column>
+                        <el-table-column prop="procInstName" label="实例名称" min-width="70"></el-table-column>
+                        <el-table-column prop="procInstId" label="实例ID" min-width="170"></el-table-column>
                         <!-- <el-table-column prop="status" label="实例状态" sortable width="120"></el-table-column> -->
                         <el-table-column 
                             prop="status" 
                             label="实例状态" 
-                            min-width="140"
-                            :filters="[{ text: '激活状态', value: '激活状态' }, { text: '被挂起', value: '被挂起' }, { text: '被删除', value: '被删除' },{ text: '已完成', value: '已完成' }]"
+                            min-width="70"
+                            :filters="[{ text: '运行中', value: '运行中' }, { text: '挂起', value: '挂起' }, { text: '被删除', value: '被删除' },{ text: '已完成', value: '已完成' },{ text: '审批被拒绝', value: '审批被拒绝' }]"
                             :filter-method="filterTag"
                             filter-placement="bottom-end">
                             <template slot-scope="scope">
@@ -87,8 +88,8 @@
                                 </el-tag>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="commitTime" label="创建时间" sortable min-width="210"></el-table-column>
-                        <el-table-column prop="committer" label="创建人" min-width="110"></el-table-column>
+                        <el-table-column prop="commitTime" label="创建时间" sortable min-width="100"></el-table-column>
+                        <el-table-column prop="committer" label="创建人" min-width="130"></el-table-column>
                         <el-table-column prop="picture" label="运行流转图" min-width="100">
                             <!-- <template slot-scope="scope">
                                 <el-button @click="handleSee(scope.row)" type="text" icon="el-icon-view" size="small">查看</el-button>
@@ -105,7 +106,7 @@
                     </el-table>
                 </div>
                 <!-- 弹出框 -->
-                <div class="addPage" :hidden="dialogVisible" style="overflow:scroll; ">
+                <div class="addPage" :hidden="dialogVisible" style="z-index:9999">
                     <span style="float:left;line-height:3.2;font-size:16px;padding-left:20px;">使用说明</span>
                     <div class="navbar-header">
                         <el-button @click="dialogVisible = true"><i class="el-icon-close"></i><span>关闭</span></el-button>
@@ -113,7 +114,7 @@
                             <svg-icon :icon-class="item.iconCls"/><span>{{item.name}}</span>
                         </el-button>
                     </div>
-                    <div class="main" style="padding:40px;">
+                    <div class="main" style="padding:40px;overflow-y:scroll;height:89vh">
                         <fm-generate-form
                             :key="index"
                             :data="jsonData"
@@ -320,14 +321,14 @@ export default {
                 contentType: "application/json; charset=utf-8",
                 params: Params
             }).then( res => {
-                console.log(res.data.obj)
+                // console.log(res.data.obj)
                 this.buttonlist1 = []
                 this.buttonlist2 = []
-                for(let i=0;i<res.data.obj.length;i++) {
-                    if(res.data.obj[i].level==1)
-                        this.buttonlist1.push(res.data.obj[i])
+                for(let i=0;i<res.data.data.length;i++) {
+                    if(res.data.data[i].level==1)
+                        this.buttonlist1.push(res.data.data[i])
                     else
-                        this.buttonlist2.push(res.data.obj[i])
+                        this.buttonlist2.push(res.data.data[i])
                 }
             }).catch( error => {
                 console.log()
@@ -409,13 +410,15 @@ export default {
                         for(var i=0;i<this.tableData.length;i++) {
                             this.tableData[i].commitTime= this.timeFormal(this.tableData[i].commitTime)
                             if(this.tableData[i].status==0)
-                                this.tableData[i].status="激活状态"
+                                this.tableData[i].status="运行中"
                             else if(this.tableData[i].status==1)
-                                this.tableData[i].status="被挂起"
+                                this.tableData[i].status="挂起"
                             else if(this.tableData[i].status==2)
                                 this.tableData[i].status="被删除"
-                            else
+                            else if(this.tableData[i].status==3)
                                 this.tableData[i].status="已完成"
+                            else
+                                this.tableData[i].status="审批被拒绝"
                         }
                     }).catch( error => {
                         console.log()
@@ -438,7 +441,7 @@ export default {
                     //发布该流程
                     var Params = {
                         form_model_id: this.formId,
-                        editor: this.$store.state.user.realName,
+                        editor: this.$store.state.user.userId,
                         form_inst_sheet: this.jsonData,
                         form_inst_value: str
                     }
@@ -501,26 +504,49 @@ export default {
         },
         //el-tag颜色分配
         chooseType(scope) {
-            if(scope.row.status === '激活状态')
-                return 'success'
-            else if(scope.row.status === '被挂起')
+            if(scope.row.status === '运行中')
+                return 'primary'
+            else if(scope.row.status === '挂起')
                 return 'warning'
             else if(scope.row.status === '被删除')
+                return 'info'
+            else if(scope.row.status === '已完成')
+                return 'success'
+            else
                 return 'error'
-            else 
-                return 'primary'
         },
         //计算时间差方法
         timeFormal(date)
         {
             var year = new Date(date)
             var month = year.getMonth()+1
-            return year.getFullYear()+'-'+month+'-'+year.getDate()+'  '+year.getHours()+':'+year.getMinutes()+':'+year.getSeconds();
+            var hours
+            if(parseInt(year.getHours())<10)
+                hours='0'+year.getHours()
+            else
+                hours=year.getHours()
+            var minutes
+            if(parseInt(year.getMinutes())<10)
+                minutes='0'+year.getMinutes()
+            else
+                minutes=year.getMinutes()
+            var seconds
+            if(parseInt(year.getSeconds())<10)
+                seconds='0'+year.getSeconds()
+            else
+                seconds=year.getSeconds()
+            return year.getFullYear()+'-'+month+'-'+year.getDate()+'  '+hours+':'+minutes+':'+seconds;
         },
         getPicture(row) {
             console.log(row)
             var src = '/my-api/admin/proc_inst/diagram?proc_inst_id='+ row.procInstId
             return src
+        },
+        //返回主页面
+        toHome() {
+            this.$router.push({
+                path: '/home'
+            })
         }
     }
 }
@@ -578,6 +604,20 @@ export default {
         line-height: 50px;
         border-bottom: 1px solid #efefef;
         background: linear-gradient(180deg,#f9fafd,#e7eef8);
+        .backbutton {
+            float: left;
+            height: 60px;
+            margin-left:-20px;
+            margin-right: 20px;
+            border-radius: 0px;
+            border: 0px;
+            border-right: 1px solid rgba(224,227,233,.7);
+            background: linear-gradient(180deg,#f9fafd,#e7eef8);
+        }
+        .backbutton:hover {
+            background: rgb(236, 241, 247);
+            color: #304265;
+        }
         .svg-icon {
             float:left;
             font-size:28px;

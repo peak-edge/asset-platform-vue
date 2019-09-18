@@ -392,7 +392,7 @@ export default {
                             headers: Params2
                         }).then( res => {
                             console.log(res)
-                            if(res.data.status==200) {
+                            if(res.data.code==200) {
                                 this.$message.success("新增平台角色成功")
                                 this.dialogFormVisible = false
                                 this.getAppList()
@@ -423,7 +423,7 @@ export default {
                             headers: Params2
                         }).then( res => {
                             console.log(res)
-                            if(res.data.status==200) {
+                            if(res.data.code==200) {
                                 this.$message.success("编辑平台角色成功")
                                 this.dialogFormVisible = false
                                 this.getAppList()

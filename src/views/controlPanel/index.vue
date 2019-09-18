@@ -57,6 +57,7 @@
 						<el-menu-item index="/controlpanel/businessresource/flow/model"><div class="barstyle" style="margin-left:-60px"></div>流程模型</el-menu-item>
 						<el-menu-item index="/controlpanel/businessresource/flow/instance"><div class="barstyle" style="margin-left:-60px"></div>流程实例</el-menu-item>
 						<el-menu-item index="/controlpanel/businessresource/flow/monitor"><div class="barstyle" style="margin-left:-60px"></div>流程监控</el-menu-item>
+						<el-menu-item index="/controlpanel/businessresource/flow/monitor2"><div class="barstyle" style="margin-left:-60px"></div>流程监控2</el-menu-item>
 					</el-submenu>
 					<!-- <el-menu-item index="4-4"><div class="barstyle"></div>列表管理</el-menu-item> -->
 					<el-menu-item index="/controlpanel/businessresource/business_role"><div class="barstyle"></div>业务角色管理</el-menu-item>

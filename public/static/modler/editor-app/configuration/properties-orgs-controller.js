@@ -30,7 +30,6 @@ angular.module('flowableModeler').controller('FlowableOrgCtrl', [ '$scope', '$mo
 
 angular.module('flowableModeler').controller('FlowableOrgPopupCtrl',
     [ '$rootScope', '$scope', '$translate', '$http', 'UserService', 'GroupService', function($rootScope, $scope, $translate, $http, UserService, GroupService) {
-
         if ($scope.property.orgnames !== undefined && $scope.property.orgnames !== null) {
             $scope.orgnames = $scope.property.orgnames;
         }else {
@@ -38,19 +37,25 @@ angular.module('flowableModeler').controller('FlowableOrgPopupCtrl',
             $scope.property.orgids = {};
         }
 
-        $scope.save = function () {
-            console.log($scope.property)
+        $scope.save = function (){
             $scope.property.value = {};
             $scope.property.value.orgnames = jQuery('#forgnames').val();
             $scope.property.value.orgids = jQuery('#forgids').val();
             $scope.updatePropertyInModel($scope.property);
-            console.log($scope.property)
             $scope.close()
         };
 
         // Close button handler
-        $scope.close = function() {
+        $scope.close = function(){
             $scope.property.mode = 'read';
             $scope.$hide();
         };
+
+        $scope.save2=function(){
+            $scope.property.value = {};
+            $scope.property.value.orgnames = jQuery('#forgnames').val();
+            $scope.property.value.orgids = jQuery('#forgids').val();
+            $scope.updatePropertyInModel($scope.property);
+            return $scope.property.value;
+        }
 }]);

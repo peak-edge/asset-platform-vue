@@ -6,9 +6,10 @@ const state = {
   token: getToken(),
   accountName: '',
   userId: '',
-  loadScene: '',
+  loadScene: [],
   sectionId: '',
   realName: '',
+  chooseFormId: '',
   // token: '',
   name: '',
   avatar: ''

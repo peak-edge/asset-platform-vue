@@ -1,70 +1,76 @@
 {
    "options" : [{
-            "value": "icon-cgfk",
-            "label": "icon-cgfk"
+            "value": "绑定客户",
+            "label": "绑定客户"
         }, {
-            "value": "icon-cgrk",
-            "label": "icon-cgrk"
+            "value": "代理指南",
+            "label": "代理指南"
         }, {
-            "value": "icon-cgsh",
-            "label": "icon-cgsh"
+            "value": "订单管理",
+            "label": "订单管理"
         }, {
-            "value": "icon-cgsq",
-            "label": "icon-cgsq"
+            "value": "订单结算",
+            "label": "订单结算"
         }, {
-            "value": "icon-dbtj",
-            "label": "icon-dbtj"
+            "value": "发布促销",
+            "label": "发布促销"
         }, {
-            "value": "icon-dndb",
-            "label": "icon-dndb"
+            "value": "发票管理",
+            "label": "发票管理"
         }, {
-            "value": "icon-entry",
-            "label": "icon-entry"
+            "value": "分享海报",
+            "label": "分享海报"
         }, {
-            "value": "icon-Financial_012",
-            "label": "icon-Financial_012"
+            "value": "分享有礼",
+            "label": "分享有礼"
         }, {
-            "value": "icon-Financial_018",
-            "label": "icon-Financial_018"
+            "value": "花钱日",
+            "label": "花钱日"
         }, {
-            "value": "icon-Financial_020",
-            "label": "icon-Financial_020"
+            "value": "积分",
+            "label": "积分"
         }, {
-            "value": "icon-Financial_021",
-            "label": "icon-Financial_021"
+            "value": "区县指南",
+            "label": "区县指南"
         }, {
-            "value": "icon-Financial_022",
-            "label": "icon-Financial_022"
+            "value": "扫码",
+            "label": "扫码"
         }, {
-            "value": "icon-Financial_024",
-            "label": "icon-Financial_024"
+            "value": "商户个人中心",
+            "label": "商户个人中心"
         }, {
-            "value": "icon-Financial_025",
-            "label": "icon-Financial_025"
+            "value": "商户详情",
+            "label": "商户详情"
         }, {
-            "value": "icon-Financial_026",
-            "label": "icon-Financial_026"
+            "value": "商户指南",
+            "label": "商户指南"
         }, {
-            "value": "icon-Financial_027",
-            "label": "icon-Financial_027"
+            "value": "申请商城商户",
+            "label": "申请商城商户"
         }, {
-            "value": "icon-Financial_028",
-            "label": "icon-Financial_028"
+            "value": "使用指南",
+            "label": "使用指南"
         }, {
-            "value": "icon-Financial_029",
-            "label": "icon-Financial_029"
+            "value": "收款码",
+            "label": "收款码"
         }, {
-            "value": "icon-Financial_030",
-            "label": "icon-Financial_030"
+            "value": "收益管理",
+            "label": "收益管理"
         }, {
-            "value": "icon-Financial_031",
-            "label": "icon-Financial_031"
+            "value": "收银管理",
+            "label": "收银管理"
         }, {
-            "value": "icon-Financial_033",
-            "label": "icon-Financial_033"
+            "value": "收银明细",
+            "label": "收银明细"
         }, {
-            "value": "icon-Financial_034",
-            "label": "icon-Financial_034"
+            "value": "我的客户",
+            "label": "我的客户"
+        }, {
+            "value": "我的商户",
+            "label": "我的商户"
+        }, {
+            "value": "我的推广商",
+            "label": "我的推广商"
     }]
 }
     

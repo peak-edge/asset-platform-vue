@@ -5,12 +5,12 @@
                 <el-form-item label="场景名称">
                     <el-input v-model="formInline.scenename" placeholder="场景名称"></el-input>
                 </el-form-item>
-                <el-form-item label="描述">
+                <!-- <el-form-item label="描述">
                     <el-select v-model="formInline.des" placeholder="关键词">
                     <el-option label="杭州电子科技大学" value="1"></el-option>
                     <el-option label="云技术实验室" value="2"></el-option>
                     </el-select>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item>
                     <el-button type="primary" icon="el-icon-search" @click="onSearch()">搜索</el-button>
                     <el-button icon="el-icon-refresh-left" @click="clearAll()">清空</el-button>
@@ -19,14 +19,14 @@
             <el-form :inline="true" :model="formInline2" class="demo-form-inline2" size="small">
                 <el-form-item>
                     <el-button type="primary" @click="dialogFormVisible2 = true"><i class="el-icon-plus"></i>新增</el-button>
-                    <el-button type="danger">删除</el-button>
+                    <el-button type="danger" disabled>删除</el-button>
                 </el-form-item>
                 <el-form-item style="float:right">
                     <el-tooltip class="item" effect="dark" content="刷新" placement="top">
                         <el-button icon="el-icon-refresh" type="info" circle @click="clearAll();getsceneList()"></el-button>
                     </el-tooltip>
                     <el-tooltip class="item" effect="dark" content="显隐" placement="top">
-                        <el-button icon="el-icon-menu" type="warning" circle></el-button>
+                        <el-button icon="el-icon-menu" type="warning" circle disabled></el-button>
                     </el-tooltip>
                     <el-tooltip class="item" effect="dark" content="搜索" placement="top">
                         <el-button icon="el-icon-search" type="success" circle @click="hideSearchItem()"></el-button>
@@ -129,15 +129,6 @@
                     filter 
                     openAll>
                 </tree-transfer>
-                <!-- <el-tree 
-                    class="elTree"
-                    :props="props"
-                    :data="treeData" 
-                    @node-click="handleNodeClick"
-                    show-checkbox
-                    default-expand-all
-                    highlight-current>
-                </el-tree> -->
                 <vue2-org-tree 
                     v-if="!showTransfer"
                     :data="data"
@@ -150,9 +141,9 @@
             </el-card>
             <el-card id="card2" style="display:none">
                 <span style="display:inline-block">{{title}}</span>
-                <el-input placeholder="搜索" style="float:right;width:165px;margin:0px 0px 15px;" size="mini">
+                <!-- <el-input placeholder="搜索" style="float:right;width:165px;margin:0px 0px 15px;" size="mini">
                     <el-button slot="append" icon="el-icon-search" style="width:50px"></el-button>
-                </el-input>
+                </el-input> -->
                 <el-table 
                     border
                     size="mini"
@@ -174,11 +165,11 @@
                     <el-table-column prop="email" label="邮箱" width="200" align="center"></el-table-column>
                     <el-table-column prop="other" label="其它" min-width="200" align="center"></el-table-column>
                     <el-table-column prop="methods" label="操作" align="center" width="200" fixed="right">
-                        <el-button size="mini">设置主部门</el-button>
-                        <el-button size="mini" type="primary">授权</el-button>
+                        <el-button size="mini" disabled>设置主部门</el-button>
+                        <el-button size="mini" type="primary" disabled>授权</el-button>
                     </el-table-column>
                 </el-table>
-                <el-pagination
+                <!-- <el-pagination
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
                     :current-page="1"
@@ -187,12 +178,6 @@
                     layout="total, sizes, prev, pager, next, jumper"
                     :total="sceneTotal"
                     style="text-align:right;margin-top:10px;">
-                </el-pagination>
-                <!-- <el-pagination
-                    :page-sizes="[100, 200, 300, 400]"
-                    :page-size="100"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="400">
                 </el-pagination> -->
             </el-card>
         </el-card>
@@ -211,7 +196,7 @@
             <span>新场景名称：</span>
             <el-input placeholder="请输入新的场景名称" size="small" style="width:350px" v-model="newInput"></el-input>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible2 = false" size="small">取 消</el-button>
+                <el-button @click="dialogFormVisible2 = false;newInput=''" size="small">取 消</el-button>
                 <el-button type="primary" @click="dialogFormVisible2 = false;handleNewSubmit()" size="small">确 定</el-button>
             </div>
         </el-dialog>
@@ -230,7 +215,7 @@
                 </el-option>
             </el-select>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible3 = false" size="small">取 消</el-button>
+                <el-button @click="dialogFormVisible3 = false;newSelect=[]" size="small">取 消</el-button>
                 <el-button type="primary" @click="dialogFormVisible3 = false;handleNewMember()" size="small">确 定</el-button>
             </div>
         </el-dialog>
@@ -265,29 +250,9 @@ export default {
                 label: 'unitName',
                 children: 'children'
             },
-            // treeData: [{
-            //     unitName: '',
-            //     sort: '',
-            //     children: []
-            // }],
             data: {},
-            // treeData: {
-            //     label: '单位 1',
-            //     children: [{
-            //         label: '单位 1-1',
-            //         children: [{
-            //              label: '单位 1-1-1'
-            //         }]
-            //     }],
-            // },
             expandAll: false,
             tableData2: [],
-            // tableData2: [{
-            //     name: 'cx',
-            //     tel: '19858190000',
-            //     email: '19858190000@163.com',
-            //     section: 'boss'
-            // }],
             multipleSelection2: [],
             // 编辑对话框
             dialogFormVisible1: false,
@@ -304,45 +269,12 @@ export default {
             mode: "transfer", // transfer穿梭框模式  addressList通讯录模式
             hardReset: false,
             showTransfer: false,
-            // mainTreeData: [],
             fromData: [],
-        //     fromData:[
-        //   {
-        //     id: "1",
-        //     pid: 0,
-        //     label: "一级 1",
-        //     children: [
-        //       {
-        //         id: "1-1",
-        //         pid: "1",
-        //         label: "二级 1-1",
-        //         disabled: true,
-        //         children: []
-        //       },
-        //       {
-        //         id: "1-2",
-        //         pid: "1",
-        //         label: "二级 1-2",
-        //         children: [
-        //           {
-        //             id: "1-2-1",
-        //             pid: "2",
-        //             children: [],
-        //             label: "二级 1-2-1"
-        //           },
-        //           {
-        //             id: "1-2-2",
-        //             pid: "2",
-        //             children: [],
-        //             label: "二级 1-2-2"
-        //           }
-        //         ]
-        //       }
-        //     ]
-        //   },
-        // ],
             toData: [],
-            allNodes: []
+            allNodes: [],
+            //暂存数据
+            stepIndex: '',
+            stepRow: ''
         };
     },
     mounted() {
@@ -354,7 +286,12 @@ export default {
     methods: {
         //条件查询
         onSearch() {
-            
+            this.getsceneList()
+        },
+        //清空按钮
+        clearAll() {
+            this.formInline.scenename = ''
+            this.getsceneList()
         },
         //隐藏搜索按钮
         hideSearchItem() {
@@ -364,7 +301,7 @@ export default {
         getsceneList() {
             var Params = {
                 page: this.currentPage,
-                sceneName: '',
+                sceneName: this.formInline.scenename,
                 size: this.pageSize,
             }
             var Params2 ={
@@ -377,15 +314,15 @@ export default {
                 params: Params,
                 headers: Params2
             }).then( res => {
-                console.log(res.data.obj.total)
-                this.sceneTotal = res.data.obj.total
+                console.log(res.data.data.total)
+                this.sceneTotal = res.data.data.total
                 this.tableData = []
-                for(let i=0;i<res.data.obj.list.length;i++)
+                for(let i=0;i<res.data.data.list.length;i++)
                 {
                     let obj2 = {}
-                    obj2.sceneid = res.data.obj.list[i].id
-                    obj2.name = res.data.obj.list[i].sceneName
-                    obj2.date = res.data.obj.list[i].addTime
+                    obj2.sceneid = res.data.data.list[i].id
+                    obj2.name = res.data.data.list[i].sceneName
+                    obj2.date = res.data.data.list[i].addTime
                     this.tableData.push(obj2)
                 }
             }).catch( error => {
@@ -405,8 +342,8 @@ export default {
                 params: Params,
                 headers: Params2
             }).then( res => {
-                if(res.data.obj) {
-                    this.fromData[0] = res.data.obj
+                if(res.data.data) {
+                    this.fromData[0] = res.data.data
                     this.fromData[0] = JSON.parse(JSON.stringify(this.fromData[0]).replace(/unitName/g, 'label'))
                     this.fromData[0] = JSON.parse(JSON.stringify(this.fromData[0]).replace(/parentId/g, 'pid'))
                     console.log(this.fromData)
@@ -420,11 +357,6 @@ export default {
             }).catch( error => {
                 console.log()
             })
-        },
-        //清空按钮
-        clearAll() {
-            this.formInline.scenename = '',
-            this.formInline.des = ''
         },
         //表格的index列
         table_index(index){
@@ -462,6 +394,8 @@ export default {
         },
         //table的查看按钮
         handleCheck(index, row) {
+            this.stepIndex = index
+            this.stepRow = row
             console.log(index, row);
             //查看其对应的场景成员
             this.id = row.sceneid
@@ -482,12 +416,8 @@ export default {
                     headers: Params2
                 }).then( res => {
                     console.log(res)
-                    // this.treeData[0].unitName = res.data.obj.unitName
-                    // this.treeData[0].sort = res.data.obj.sort
-                    // this.treeData[0].children = res.data.obj.children
-                    // console.log(res.data.obj.children)
-                    if(res.data.obj.children) {
-                        this.data = res.data.obj
+                    if(res.data.data.children) {
+                        this.data = res.data.data
                         this.data = JSON.parse(JSON.stringify(this.data).replace(/unitName/g, 'label'))
                         this.data = JSON.parse(JSON.stringify(this.data).replace(/parentId/g, 'pid'))
                         console.log(this.data)
@@ -515,7 +445,7 @@ export default {
                 headers: Params2
             }).then( res => {
                 console.log(res)
-                if(res.data.status == 200) {
+                if(res.data.code == 200) {
                     this.getsceneList()
                     this.$message.success(res.data.msg);
                 }
@@ -548,7 +478,7 @@ export default {
                 headers: Params3
             }).then( res => {
                 console.log(res)
-                if(res.data.status == 200) {
+                if(res.data.code == 200) {
                     this.getsceneList()
                     this.$message.success(res.data.msg);
                 }
@@ -575,7 +505,7 @@ export default {
                 data: Params3,
                 headers: Params4
             }).then( res => {
-                if(res.data.status == 200) {
+                if(res.data.code == 200) {
                     this.getsceneList()
                     this.$message.success(res.data.msg);
                 }
@@ -629,16 +559,30 @@ export default {
             console.log(data);
         },
 
-        //场景结构设置-------------------------------------------------------------------------
+        //场景结构设置--------------------------------------------------------------------------------
         //根据场景初始化穿梭框
         initialTree() {
             console.log(this.data)
             if(Object.keys(this.data).length != 0) {
                 this.showTransfer=true;
                 this.toData[0] = this.data
+                this.allNodes = []
+                this.GetSubJson(this.toData, this.allNodes)
+                console.log(this.allNodes)
             }
             else {
-                console.log("ooooooooo未选择场景oooooooooooo")
+                this.$message.warning("未选择场景")
+            }
+        },
+        //得到树中所有Id值的方法
+        GetSubJson(jsonData, json) {
+            for (var i = 0; i < jsonData.length; i++) {
+                if (jsonData[i].id !='') {
+                    json.push(jsonData[i].id);
+                    if (jsonData[i].children.length!=0) {
+                        this.GetSubJson(jsonData[i].children, json);
+                    }
+                }
             }
         },
         // 切换模式 现有树形穿梭框模式transfer 和通讯录模式addressList
@@ -653,9 +597,9 @@ export default {
         add(fromData,toData,obj){
             // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的{keys,nodes,halfKeys,halfNodes}对象
             // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
-            console.log("fromData:", fromData);
-            console.log("toData:", toData);
-            console.log("obj:", obj);
+            // console.log("fromData:", fromData);
+            // console.log("toData:", toData);
+            // console.log("obj:", obj);
             for(var i=0;i<obj.keys.length;i++)
 				this.allNodes.push(obj.keys[i])
 			for(var j=0;j<obj.harfKeys.length;j++)
@@ -667,9 +611,9 @@ export default {
         remove(fromData,toData,obj){
             // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的{keys,nodes,halfKeys,halfNodes}对象
             // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
-            console.log("fromData:", fromData);
-            console.log("toData:", toData);
-            console.log("obj:", obj);
+            // console.log("fromData:", fromData);
+            // console.log("toData:", toData);
+            // console.log("obj:", obj);
             var removeNode = []
 			for(var i=0;i<obj.keys.length;i++)
 				removeNode.push(obj.keys[i])
@@ -694,7 +638,7 @@ export default {
             console.log(this.allNodes)
             var Params = {
                 sceneId: this.id,
-                treeIds: this.allNodes.join(",")
+                nodeIds: this.allNodes.join(",")
             }
 			var Params2 = {
                 Authorization: this.$store.state.user.token
@@ -707,16 +651,15 @@ export default {
 				params: Params,
 				headers: Params2
             }).then( res => {
-                if(res.data.status==200)
+                if(res.data.code==200) {
                     this.$message.success("新增组织部门成功")
+                }
                 else 
                     this.$message.error(res.data.msg)
             }).catch( error => {
                 console.log()
             })
         },
-
-
 
         /////////////////////////////////
         //初始化强制展开
@@ -732,8 +675,8 @@ export default {
         onExpand(e,data) {
             if ("expand" in data) {
                 data.expand = !data.expand;
-                if (!data.expand && this.data.children) {
-                    this.collapse(this.data.children);
+                if (!data.expand && data.children) {
+                    this.collapse(data.children);
                 }
             } else {
                 this.$set(data, "expand", true);
@@ -811,10 +754,9 @@ export default {
                 params: Params,
                 headers: Params2
             }).then( res => {
-                if(res.data.status==200) {
-                    console.log("ppppppppppppppppppppppppppppppppppppppppppppppppp")
-                    console.log(res.data.obj)
-                    this.tableData2 = res.data.obj
+                if(res.data.code==200) {
+                    console.log(res.data.data)
+                    this.tableData2 = res.data.data
                 }
                 else {
                     this.$message.error(res.data.msg)
@@ -842,13 +784,13 @@ export default {
                 params: Params,
                 headers: Params2
             }).then( res => {
-                if(res.data.status==200) {
+                if(res.data.code==200) {
                     this.newMemberOptions = []
-                    for(var i=0;i<res.data.obj.length;i++) {
+                    for(var i=0;i<res.data.data.length;i++) {
                         var obj = []
-                        obj.label = res.data.obj[i].accountName
-                        obj.realname = res.data.obj[i].realName
-                        obj.value = res.data.obj[i].id
+                        obj.label = res.data.data[i].accountName
+                        obj.realname = res.data.data[i].realName
+                        obj.value = res.data.data[i].id
                         this.newMemberOptions.push(obj)
                     }
                     this.dialogFormVisible3 = true
@@ -870,6 +812,7 @@ export default {
             var Params2 ={
                 Authorization: this.$store.state.user.token
             }
+            console.log(Params)
             this.$ajax({
                 url:'/dev-api/scene/members',
                 method: 'post',
@@ -877,7 +820,8 @@ export default {
                 params: Params,
                 headers: Params2
             }).then( res => {
-                if(res.data.status==200) {
+                console.log(res)
+                if(res.data.code==200) {
                     this.getsceneMember();
                     this.$message.success("新增场景用户成功")
                 }
@@ -912,15 +856,16 @@ export default {
                         Authorization: this.$store.state.user.token
                     }
                     this.$ajax({
-                        url:'/dev-api/scene/members',
-                        method: 'delete',
+                        url:'/dev-api/scene/members/remove',
+                        method: 'post',
                         contentType: "application/json; charset=utf-8",
                         params: Params,
                         headers: Params2
                     }).then( res => {
                         console.log(res)
-                        if(res.data.status==200) {
-                            this.tableData2 = res.data.obj
+                        if(res.data.code==200) {
+                            // this.tableData2 = res.data.data
+                            this.getsceneMember()
                             this.$message.success("批量删除用户成功")
                         }
                         else {

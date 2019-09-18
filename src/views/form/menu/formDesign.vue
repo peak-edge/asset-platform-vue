@@ -18,15 +18,14 @@
                         v-for="item in options"
                         :key="item.groupId"
                         :label="item.groupName"
-                        :value="item.groupId"
-                        style="width:100%">
+                        :value="item.groupId">
                         <span style="float: left">{{ item.groupName }}</span>
                         <span style="float: right; color: #8492a6; font-size: 13px">{{ item.groupId }}</span>
                     </el-option>
                 </el-select>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="getjson()" style="float:right;margin-left:15px;position:fixed">保存表单</el-button>
+                <el-button type="primary" @click="getjson()" style="float:right;margin-left:15px;position:fixed">{{buttonName}}</el-button>
             </el-form-item>
             <!-- <el-form-item label="表单名称：" prop="input">
                 <el-select
@@ -100,7 +99,8 @@ export default {
             values: {},
             remoteFuncs: {},
             applist: '',
-            options: []
+            options: [],
+            buttonName: '保存表单',
         }
     },
     mounted() {
@@ -112,6 +112,8 @@ export default {
     methods: {
         //得到路由传过来的参数
         getinitalize() {
+            console.log(this.$store.state.user.chooseFormId)
+            console.log("ooooooooooooooooooooooooooooooooooooooooooooooooooo")
             // this.$refs.makingform.setJSON(this.jsonData)
             console.log(this.apptitle)
             console.log(this.appicon)
@@ -128,9 +130,11 @@ export default {
                 this.$refs.makingform.setJSON(JSON.parse(this.formjson));
                 this.wheaterModifier = 1;
                 this.groupdisabled = true
+                this.buttonName = '修改表单'
             }
         },
         getGroupList() {
+            console.log(this.$store.state.user.chooseFormId)
             //得到表单分组列表
             var Params = {
                 appId: this.appid,
@@ -179,7 +183,7 @@ export default {
                             app_id: this.appybyid,
                             form_name: this.dynamicValidateForm.input,
                             form_sheet: this.storage,
-                            created_by: this.$store.state.user.realName,
+                            created_by: this.$store.state.user.userId,
                             scene_id: this.$store.state.user.loadScene.id,
                         }
                         console.log(Params)
@@ -245,7 +249,7 @@ export default {
                     //修改表单
                     else {
                         var Params = {
-                            form_model_id: this.formid,
+                            form_model_id: this.$store.state.user.chooseFormId,
                             form_name: this.dynamicValidateForm.input,
                             form_sheet: this.storage,
                             group_id: -1,

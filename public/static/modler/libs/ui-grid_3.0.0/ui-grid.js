@@ -434,6 +434,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
      *
      */
     sortable: function( $scope ) {
+      console.log($scope.col)
       if ( $scope.grid.options.enableSorting && typeof($scope.col) !== 'undefined' && $scope.col && $scope.col.enableSorting) {
         return true;
       }
@@ -3178,6 +3179,11 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
         controller: ['$scope', function ($scope) {
           this.rowStyle = function (index) {
             var rowContainer = $scope.rowContainer;
+            
+            if(rowContainer.visibleColumnCache.length==3){
+              rowContainer.visibleColumnCache.pop()
+            }
+
             var colContainer = $scope.colContainer;
 
             var styles = {};
@@ -5182,20 +5188,25 @@ angular.module('ui.grid')
     }
 
     for (var ci = 0; ci < columns.length; ci++) {
+
       var column = columns[ci];
 
       // If the column is visible
       if (column.visible) {
         // If the column has a container specified
         if (typeof(column.renderContainer) !== 'undefined' && column.renderContainer) {
+    
           self.renderContainers[column.renderContainer].visibleColumnCache.push(column);
         }
         // If not, put it into the body container
-        else {
+        else{
+          
           self.renderContainers.body.visibleColumnCache.push(column);
         }
       }
     }
+   
+
   };
 
   /**
@@ -7169,6 +7180,7 @@ angular.module('ui.grid')
       self.headerTooltip = false;
     } else if ( colDef.headerTooltip === true ){
       self.headerTooltip = function(col) {
+
         return col.displayName;
       };
     } else if (typeof(colDef.headerTooltip) === 'function' ){
@@ -8654,6 +8666,9 @@ angular.module('ui.grid')
     // Define the left-most rendered columns
     this.currentFirstColumn = renderedRange[0];
 
+    
+    columnArr.pop();
+ 
     this.setRenderedColumns(columnArr);
   };
 
@@ -8664,10 +8679,10 @@ angular.module('ui.grid')
       var offset = self.columnOffset;
 
       if (self.grid.isRTL()) {
-        return { 'margin-right': offset + 'px' };
+        return { 'margin-right': offset + 'px'};
       }
       else {
-        return { 'margin-left': offset + 'px' };
+        //return { 'margin-left': offset + 'px' };
       }
     }
 
@@ -8725,6 +8740,7 @@ angular.module('ui.grid')
 
     // look at each column, process any manual values or %, put the * into an array to look at later
     columnCache.forEach(function(column, i) {
+
       var width = 0;
       // Skip hidden columns
       if (!column.visible) { return; }
@@ -17628,6 +17644,7 @@ module.filter('px', function() {
                           func: updateRowContainerWidth
                       });
                   }*/
+      
 
               },
               post: function ($scope, $elm, $attrs, controllers) {
@@ -28159,6 +28176,7 @@ module.filter('px', function() {
          *
          *  @description Public Api for validation feature
          */
+      
         var publicApi = {
           events: {
             validate: {
@@ -28305,6 +28323,7 @@ module.filter('px', function() {
 })();
 
 angular.module('ui.grid').run(['$templateCache', function($templateCache) {
+
   'use strict';
 
   $templateCache.put('ui-grid/ui-grid-filter',
@@ -28313,7 +28332,7 @@ angular.module('ui.grid').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('ui-grid/ui-grid-footer',
-    "<div class=\"ui-grid-footer-panel ui-grid-footer-aggregates-row\"><!-- tfooter --><div class=\"ui-grid-footer ui-grid-footer-viewport\"><div class=\"ui-grid-footer-canvas\"><div class=\"ui-grid-footer-cell-wrapper\" ng-style=\"colContainer.headerCellWrapperStyle()\"><div role=\"row\" class=\"ui-grid-footer-cell-row\"><div ui-grid-footer-cell role=\"gridcell\" ng-repeat=\"col in colContainer.renderedColumns track by col.uid\" col=\"col\" render-index=\"$index\" class=\"ui-grid-footer-cell ui-grid-clearfix\"></div></div></div></div></div></div>"
+    "<div class=\"ui-grid-footer-panel ui-grid-footer-aggregates-row\"><!-- tfooter --><div class=\"ui-grid-footer ui-grid-footer-viewport\"><div class=\"ui-grid-footer-canvas\"><div class=\"ui-grid-footer-cell-wrapper\" ng-style=\"colContainer.headerCellWrapperStyle()\"><div role=\"row\" class=\"ui-grid-footer-cell-row\"><div ui-grid-footer-cell role=\"gridcell\" ng-repeat=\"col in colContainer.renderedColumns track by col.uid\" col=\"col\" render-index=\"$index\" class=\"ui-grid-footer-cell ui-grid-clearfix\">{{}}</div></div></div></div></div></div>"
   );
 
 
@@ -28399,7 +28418,7 @@ angular.module('ui.grid').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('ui-grid/uiGridHeaderCell',
-    "<div role=\"columnheader\" ng-class=\"{ 'sortable': sortable }\" ui-grid-one-bind-aria-labelledby-grid=\"col.uid + '-header-text ' + col.uid + '-sortdir-text'\" aria-sort=\"{{col.sort.direction == asc ? 'ascending' : ( col.sort.direction == desc ? 'descending' : (!col.sort.direction ? 'none' : 'other'))}}\"><div role=\"button\" tabindex=\"0\" class=\"ui-grid-cell-contents ui-grid-header-cell-primary-focus\" col-index=\"renderIndex\" title=\"TOOLTIP\"><span class=\"ui-grid-header-cell-label\" ui-grid-one-bind-id-grid=\"col.uid + '-header-text'\">{{ col.displayName CUSTOM_FILTERS }}</span> <span ui-grid-one-bind-id-grid=\"col.uid + '-sortdir-text'\" ui-grid-visible=\"col.sort.direction\" aria-label=\"{{getSortDirectionAriaLabel()}}\"><i ng-class=\"{ 'ui-grid-icon-up-dir': col.sort.direction == asc, 'ui-grid-icon-down-dir': col.sort.direction == desc, 'ui-grid-icon-blank': !col.sort.direction }\" title=\"{{isSortPriorityVisible() ? i18n.headerCell.priority + ' ' + ( col.sort.priority + 1 )  : null}}\" aria-hidden=\"true\"></i> <sub ui-grid-visible=\"isSortPriorityVisible()\" class=\"ui-grid-sort-priority-number\">{{col.sort.priority + 1}}</sub></span></div><div role=\"button\" tabindex=\"0\" ui-grid-one-bind-id-grid=\"col.uid + '-menu-button'\" class=\"ui-grid-column-menu-button\" ng-if=\"grid.options.enableColumnMenus && !col.isRowHeader  && col.colDef.enableColumnMenu !== false\" ng-click=\"toggleMenu($event)\" ng-class=\"{'ui-grid-column-menu-button-last-col': isLastCol}\" ui-grid-one-bind-aria-label=\"i18n.headerCell.aria.columnMenuButtonLabel\" aria-haspopup=\"true\"><i class=\"ui-grid-icon-angle-down\" aria-hidden=\"true\">&nbsp;</i></div><div ui-grid-filter></div></div>"
+    "<div role=\"columnheader\" ng-class=\"{ 'sortable': sortable }\" ui-grid-one-bind-aria-labelledby-grid=\"col.uid + '-header-text ' + col.uid + '-sortdir-text'\" aria-sort=\"{{col.sort.direction == asc ? 'ascending' : ( col.sort.direction == desc ? 'descending' : (!col.sort.direction ? 'none' : 'other'))}}\" ><div  role=\"button\" tabindex=\"0\" class=\"ui-grid-cell-contents ui-grid-header-cell-primary-focus\" col-index=\"renderIndex\" title=\"TOOLTIP\"><span class=\"ui-grid-header-cell-label\" ui-grid-one-bind-id-grid=\"col.uid + '-header-text'\">{{ col.displayName CUSTOM_FILTERS }}</span> <span ui-grid-one-bind-id-grid=\"col.uid + '-sortdir-text'\" ui-grid-visible=\"col.sort.direction\" aria-label=\"{{getSortDirectionAriaLabel()}}\"><i ng-class=\"{ 'ui-grid-icon-up-dir': col.sort.direction == asc, 'ui-grid-icon-down-dir': col.sort.direction == desc, 'ui-grid-icon-blank': !col.sort.direction }\" title=\"{{isSortPriorityVisible() ? i18n.headerCell.priority + ' ' + ( col.sort.priority + 1 )  : null}}\" aria-hidden=\"true\"></i> <sub ui-grid-visible=\"isSortPriorityVisible()\" class=\"ui-grid-sort-priority-number\">{{col.sort.priority + 1}}</sub></span></div><div role=\"button\" tabindex=\"0\" ui-grid-one-bind-id-grid=\"col.uid + '-menu-button'\" class=\"ui-grid-column-menu-button\" ng-if=\"grid.options.enableColumnMenus && !col.isRowHeader  && col.colDef.enableColumnMenu !== false\" ng-click=\"toggleMenu($event)\" ng-class=\"{'ui-grid-column-menu-button-last-col': isLastCol}\" ui-grid-one-bind-aria-label=\"i18n.headerCell.aria.columnMenuButtonLabel\" aria-haspopup=\"true\"><i class=\"ui-grid-icon-angle-down\" aria-hidden=\"true\">&nbsp;</i></div><div ui-grid-filter></div></div>"
   );
 
 

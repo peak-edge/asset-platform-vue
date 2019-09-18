@@ -47,24 +47,6 @@
 			onCheck:zTreeOnClick   
 		}
 	};
-	// var zNodes =[
- //        { id:1, pId:0, name:"浙江省财政厅", open:true},
- //        { id:2, pId:0, name:"浙江省财政厅222", open:true},
- //        { id:'abc', pId:1, name:"部门A", open:true},
- //        { id:111, pId:'abc', name:"部门A1"},
- //        { id:112, pId:'abc', name:"部门A2"},
- //        { id:1111, pId:111, name:"部门A11"},
-
- //        { id:1112, pId:111, name:"部门A12"},
- //        { id:22, pId:2, name:"部门B", open:false},
- //        { id:10021001, pId:22, name:"部门B1"},
- //        { id:10021002, pId:22, name:"部门B2"},
-
- //        { id:33, pId:1, name:"部门C", open:false},
- //        { id:10031001, pId:33, name:"部门C1"},
- //        { id:10031002, pId:33, name:"部门C2"},
- //        { id:10031003, pId:33, name:"部门C3"},
-	// ];
 
 
 
@@ -140,6 +122,7 @@ let arr=[];
         }
     }
     recurse(data, "");
+  
     return arr;
 }
 
@@ -150,14 +133,12 @@ let arr=[];
         jQuery.ajax({ 
                 type: "GET",
                 dataType: "json",
-                url: "/dev-api/scene/members?sceneId=89371977-b1b4-11e9-8d9b-005056c00001",
+                url: "/dev-api/scene/members?sceneId=e65edc60-96ee-11e9-ac96-005056c00001",
                 headers:{
                     "authorization":token
                  },
                 success: function(result){
-                	 jQuery.fn.zTree.init(jQuery("#userZtree"),setting,dubRemove(unflatten(result.obj)));
-                	 
-
+                	 jQuery.fn.zTree.init(jQuery("#userZtree"),setting,dubRemove(unflatten(result.data)));              	 
                 },
                 error:function(err){
                     console.log(err)

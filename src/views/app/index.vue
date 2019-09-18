@@ -7,16 +7,16 @@
             <el-menu :default-active="activeIndex" @select="handleSelect">
                 <el-menu-item v-for="(item,index) in applist" :key="index" :index="String(index)">
                     <div class="barstyle"></div>
-                    <svg-icon :icon-class="item.iconCls"/>
-                    <span slot="title">{{item.applicationName}}</span>
-                    <el-dropdown placement="bottom-start" style="width:40px;">
+                    <svg-icon :icon-class="item.iconCls" style="font-size:22px"/>
+                    <span slot="title">{{item.applicationName|ellipsis}}</span>
+                    <el-dropdown placement="bottom-start">
                         <i class="el-icon-s-tools"></i>
                         <el-dropdown-menu slot="dropdown" class="el-dropdown-link1">
-                            <el-dropdown-item>重命名</el-dropdown-item>
-                            <el-dropdown-item>报表配置到移动端首页</el-dropdown-item>
-                            <el-dropdown-item>发布到钉钉工作台</el-dropdown-item>
-                            <el-dropdown-item>发布给其他企业</el-dropdown-item>
-                            <el-dropdown-item @click.native="deleteApp(item.id)">删除</el-dropdown-item>
+                            <el-dropdown-item disabled>重命名</el-dropdown-item>
+                            <el-dropdown-item disabled>报表配置到移动端首页</el-dropdown-item>
+                            <el-dropdown-item disabled>发布到钉钉工作台</el-dropdown-item>
+                            <el-dropdown-item disabled>发布给其他企业</el-dropdown-item>
+                            <el-dropdown-item @click.native="deleteApp(item.id)" disabled>删除</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </el-menu-item>
@@ -27,7 +27,7 @@
             <span>{{title}}</span>
             <div class="buttongroup" style="margin-bottom:-50px">
                 <el-button @click="addform1(title,icon,id,ybyid)"><i class="el-icon-plus"></i>表单</el-button>
-                <el-button><i class="el-icon-plus"></i>报表</el-button>
+                <el-button disabled><i class="el-icon-plus"></i>报表</el-button>
                 <el-button @click="dialogVisible2 = true" style="margin-left:20px;"><i class="el-icon-plus"></i>分组</el-button>
             </div>
             <div class="formcard" v-for="(item, index) in formlist" :key="index">
@@ -51,17 +51,19 @@
         <el-dialog
             title="新建应用"
             :visible.sync="dialogVisible"
+            :close-on-click-modal="false"
             width="520px"
+            class="newAppDialog"
             center>
             <el-form>
                 <el-form-item label="应用名称：">
-                    <el-input placeholder="请输入应用名称" v-model="appname" style="width:380px" clearable></el-input>
+                    <el-input placeholder="请输入应用名称" v-model="appname" clearable></el-input>
                 </el-form-item>
                 <el-form-item label="应用图标：">
-                    <el-select placeholder="请选择应用图标" v-model="value" style="width:380px" >
+                    <el-select placeholder="请选择应用图标" v-model="value">
                         <el-card>
                             <!-- 待完善 -->
-                            <el-pagination small layout="prev, pager, next" :total="50"> </el-pagination>
+                            <!-- <el-pagination small layout="prev, pager, next" :total="50"> </el-pagination> -->
                             <el-option style="width:50px;float:left;border: 1px solid #e6edfd" 
                                 v-for="item in options" 
                                 :key="item.value"
@@ -74,7 +76,7 @@
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false;appname = ''">取 消</el-button>
+                <el-button @click="dialogVisible=false;appname='';value=''">取 消</el-button>
                 <el-button type="primary" @click="newApp()">确 定</el-button>
             </span>
         </el-dialog>
@@ -104,6 +106,16 @@ import { options } from '@/icons/icon.json'
 // Vue.component(MakingForm.name, MakingForm)
 export default {
     inject:['reload'],
+    filters: {
+    //vue中的过滤器filter
+        ellipsis (value) {
+            if (!value) return ''
+            if (value.length > 8) {
+                return value.slice(0,8) + '...'
+            }
+            return value
+        }
+    },
     data() {
         return {
             //应用列表
@@ -349,6 +361,7 @@ export default {
                         }
                     }
                     console.log(title,icon,id,ybyid,group,formName,formid,formjson)
+                    this.$store.state.user.chooseFormId = formid
                     this.$router.push({ 
                         path: '/form',
                         query: {
@@ -449,9 +462,8 @@ export default {
                 params: Params1,
                 headers: Params2
             }).then( res => {
-                console.log("8888888888888888888888888888888888")
                 console.log(res)
-                if(res.data.status==200) {
+                if(res.data.code==200) {
                     this.$message.success("表单加在权限中成功")
                     this.getAppList()
                 }
@@ -656,11 +668,38 @@ export default {
             }
         }
     }
+    .newAppDialog {
+        .el-form-item {
+            margin-left:35px;
+        }
+        .el-input {
+            margin-left:0px;
+            width:300px;
+        }
+        .el-select {
+            width:300px;
+            .el-option {
+                width:20%;
+                margin:10px;
+                .svg-icon{
+                    size:70px;
+                }
+            }
+        }
+    }
 }
 </style>
 <style>
+.el-scrollbar__view {
+    padding: 6px !important;
+    width:300px;
+}
 .el-card__body {
     padding: 20px !important;
+}
+.el-select-dropdown__item {
+    padding: 2px 12px;
+    margin: 2px;
 }
 </style>
 

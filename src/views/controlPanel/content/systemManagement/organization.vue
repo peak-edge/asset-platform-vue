@@ -7,9 +7,9 @@
                 </el-input>
                 <el-button size="mini" type="warning" style="margin-left:15px;margin-top:2px" @click="clearAll()">清除</el-button>
                 <div class="buttongroup">
-                    <el-button type="primary" size="mini">同步组织机构树</el-button>
-                    <el-button type="danger" size="mini" style="margin-right:0px">批量移除</el-button>
-                    <el-button type="primary" size="mini" style="margin-right:20px">新增</el-button>
+                    <el-button type="primary" size="mini" disabled>同步组织机构树</el-button>
+                    <el-button type="danger" size="mini" style="margin-right:0px" disabled>批量移除</el-button>
+                    <el-button type="primary" size="mini" style="margin-right:20px" disabled>新增</el-button>
                 </div>
             </el-menu>
             <el-card>
@@ -60,7 +60,7 @@
                     </el-table>
                     <div class="dialog-buttongroup" style="text-align:right;margin:30px 20px 0px;">
                         <el-button @click="dialogVisible = false;resetForm('newNodeForm')" size="small">取 消</el-button>
-                        <el-button type="info" size="small" @click="showEdit()">编辑该节点</el-button>
+                        <el-button type="info" size="small" @click="showEdit()" disabled>编辑该节点</el-button>
                         <el-button type="primary" size="small" @click="showNewSon()">新增子节点</el-button>
                         <el-button type="danger" size="small" @click="deleteNode()">删除此节点</el-button>
                     </div>
@@ -92,7 +92,7 @@
                                 <el-input v-model="domain.value"
                                     clearable 
                                     style="width:430px" 
-                                    maxlength="10"
+                                    maxlength="18"
                                     show-word-limit>
                                 </el-input>
                                 <el-button @click.prevent="removeDomain(domain)" type="danger" icon="el-icon-delete" circle style="margin-left:18px"></el-button>
@@ -179,7 +179,7 @@ export default {
                 label: '番茄色'
             }],
             data: {},
-            horizontal: false,
+            horizontal: true,
             collapsable: true,
             expandAll: false,
             labelClassName: "bg-white",
@@ -224,9 +224,8 @@ export default {
                 params: Params,
                 headers: Params2
             }).then( res => {
-                if(res.data.obj) {
-                    console.log(res.data.obj)
-                    this.data = res.data.obj
+                if(res.data.data) {
+                    this.data = res.data.data
                     this.data = JSON.parse(JSON.stringify(this.data).replace(/unitName/g, 'label'))
                     // console.log(JSON.stringify(this.data.children).slice(1, -1))
                     // this.data = this.data.children
@@ -286,8 +285,8 @@ export default {
         onExpand(e,data) {
             if ("expand" in data) {
                 data.expand = !data.expand;
-                if (!data.expand && this.data.children) {
-                    this.collapse(this.data.children);
+                if (!data.expand && data.children) {
+                    this.collapse(data.children);
                 }
             } else {
                 this.$set(data, "expand", true);
@@ -401,7 +400,7 @@ export default {
                 data: Params
             }).then( res => {
                 console.log(res.data)
-                if(res.data.status=="200") {
+                if(res.data.code==200) {
                     this.dialogVisible = false
                     this.resetForm('newNodeForm')
                     this.getMainTree()
@@ -426,7 +425,7 @@ export default {
                 data: Params
             }).then( res => {
                 console.log(res.data)
-                if(res.data.status=="200") {
+                if(res.data.code==200) {
                     this.dialogVisible = false
                     this.getMainTree()
                     this.$message.success("删除节点成功");
@@ -444,10 +443,10 @@ export default {
 
 <style lang="scss" scoped>
 .organization-container {
-    height:88vh;
+    height:92vh;
     .el-main {
         border-left: none;
-        padding-top: 10px;
+        padding-top: 4px;
         background: rgb(242,242,242);
         .el-menu {
             padding-top: 5px !important;
@@ -460,8 +459,8 @@ export default {
             }
         }
         .el-card {
-            margin-top: 22px;
-            height: 73vh;
+            margin-top: 10px;
+            height: 80vh;
             display: block;
             margin-left: 0px;
             margin-right: 0px;

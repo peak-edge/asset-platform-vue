@@ -148,20 +148,20 @@ let arr=[];
     return arr;
 }
 
-console.log()
+
 
 	jQuery(document).ready(function(){
 
         jQuery.ajax({ 
                 type: "GET",
                 dataType: "json",
-                url: "/dev-api/scene/role/list?sceneId=89371977-b1b4-11e9-8d9b-005056c00001",
+                url: "/dev-api/scene/role/list-by-scene?sceneId=e65edc60-96ee-11e9-ac96-005056c00001&&page=1&&size=10",
                 headers:{
                     "authorization":token
                  },
                 success: function(result){
-                	 jQuery.fn.zTree.init(jQuery("#roleZtree"),setting,dubRemove(unflatten(result.obj)));
 
+                	 jQuery.fn.zTree.init(jQuery("#roleZtree"),setting,dubRemove(unflatten(result.data.list)));
                 },
                 error:function(err){
                     console.log(err)

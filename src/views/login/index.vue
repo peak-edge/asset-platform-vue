@@ -137,6 +137,7 @@ export default {
                         accountName: this.loginForm.accountName,
                         pwd: this.loginForm.pwd
                     }
+                    console.log(Params)
                     this.$ajax({
                         url:'/dev-api/login',
                         method: 'post',
@@ -145,14 +146,26 @@ export default {
                     }).then( res => {
                         this.loading = false
                         console.log(res)
-                        if(res.data.status == 200) {
-                            this.$store.state.user.token = res.data.obj.Authorization
-                            this.$store.state.user.accountName = res.data.obj.accountName
-                            this.$store.state.user.userId = res.data.obj.userId
-                            this.$store.state.user.realName = res.data.obj.realName
+                        if(res.data.code == 200) {
+                            console.log("1")
+                            this.$store.state.user.token = res.data.data.Authorization
+                            console.log("2")
+
+                            this.$store.state.user.accountName = res.data.data.accountName
+                            console.log("3")
+
+                            this.$store.state.user.userId = res.data.data.userId
+                            console.log("4")
+
+                            this.$store.state.user.realName = res.data.data.realName
+                            console.log("5")
+
+                            this.$store.state.user.loadScene = []
+                            console.log("6")
+
                             // console.log(this.$store.state.user.token)
                             //判断平台管理员和终端用户
-                            if(res.data.obj.admin==1)
+                            if(res.data.data.admin==1)
                                 this.$router.push({path: '/adminhome'})
                             else
                                 this.$router.push({path: '/home', query:{fromLogin:'true'}})

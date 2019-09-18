@@ -249,7 +249,6 @@ export default {
                 headers: Params2
             }).then( res => {
                 console.log(res)
-                console.log("hhhhhhhhhhhhhhhhhhhhhhhh")
                 this.roleTotal = res.data.data.total
 				this.tableData = res.data.data.list
             }).catch( error => {
@@ -389,7 +388,7 @@ export default {
                 headers: Params2
             }).then( res => {
                 console.log(res)
-                this.tableData2 = res.data.obj
+                this.tableData2 = res.data.data
             }).catch( error => {
                 console.log()
             })
@@ -428,7 +427,7 @@ export default {
                 headers: Params2
             }).then( res => {
 				console.log(res)
-				if(res.data.status==200) {
+				if(res.data.code==200) {
 					this.$message.success("删除平台角色成功")
 					this.getBusinessRoleList()
 				}
@@ -498,7 +497,7 @@ export default {
                             headers: Params2
                         }).then( res => {
                             console.log(res)
-                            if(res.data.status==200) {
+                            if(res.data.code==200) {
                                 this.$message.success("新增平台角色成功")
                                 this.dialogFormVisible = false
                                 this.getBusinessRoleList()
@@ -529,7 +528,7 @@ export default {
                             headers: Params2
                         }).then( res => {
                             console.log(res)
-                            if(res.data.status==200) {
+                            if(res.data.code==200) {
                                 this.$message.success("编辑平台角色成功")
                                 this.dialogFormVisible = false
                                 this.getBusinessRoleList()

@@ -40,7 +40,7 @@
                     </el-col>
                     <el-col :span="0.5">&nbsp;</el-col>
                     <el-col :span="9">
-                        <span>{{item.id}}</span><br>
+                        <span>{{item.content}}</span><br>
                         <span style="color:orange;line-height:2">{{item.nodeType}}</span>
                     </el-col>
                     <el-col :span="1">&nbsp;</el-col>
@@ -50,7 +50,8 @@
                         <span>{{item.commitTime}}</span>
                     </el-col>
                     <el-col :span="3.5" v-if="item.nodeType=='审批节点'">
-                        <el-button type="primary" size="small" @click="Approve(item)">同意</el-button>
+                        <!-- <el-button type="primary" size="small" @click="Approve(item)">同意</el-button> -->
+                        <el-button type="primary" size="small" @click="dialogVisible = false;getKey(item);">填写</el-button>
                         <el-button size="small" @click="disApprove(item)">不同意</el-button>
                     </el-col>
                     <el-col :span="3.5" v-if="item.nodeType=='经办节点'">
@@ -83,16 +84,17 @@
                     </el-col>
                 </el-row>
             </el-card> -->
-            <div class="addPage" :hidden="dialogVisible" style="overflow:scroll; ">
+            <div class="addPage" :hidden="dialogVisible" style="z-index:9999">
                 <span style="float:left;line-height:3.2;font-size:16px;padding-left:20px;">使用说明</span>
                 <div class="navbar-header">
                     <el-button @click="dialogVisible = true"><i class="el-icon-close"></i><span>关闭</span></el-button>
-                    <el-button id="Button" @click="Submit()"><span>提交</span></el-button>
+                    <el-button id="Button1" @click="Submit()"><span>提交</span></el-button>
+                    <el-button id="Button2" @click="Submit2()"><span>同意</span></el-button>
                     <!-- <el-button v-for="(item,index) in buttonlist2" :key="index">
                         <svg-icon :icon-class="item.iconCls"/><span>{{item.name}}</span>
                     </el-button> -->
                 </div>
-                <div class="main" style="padding:40px;">
+                <div class="main" style="padding:40px;overflow-y:scroll;height:89vh">
                     <fm-generate-form
                         :data="jsonData"
                         :remote="remoteFuncs"
@@ -196,8 +198,10 @@ export default {
         //得到点击的位置信息
         getKey(item) {
             if(item.nodeType=="经办节点"){
-                var ele = document.getElementById("Button");
-                ele.style.display = "block";
+                var ele1 = document.getElementById("Button1");
+                var ele2 = document.getElementById("Button2");
+                ele1.style.display = "block";
+                ele2.style.display = "none";
                 console.log("经办结点")
                 // var result = JSON.parse(item.formInstValue.slice(1, -1));
                 var result = JSON.parse(item.formInstValue);
@@ -207,8 +211,10 @@ export default {
                 console.log(this.clickitem)
             }
             else if(item.nodeType=="审批节点"){
-                var ele = document.getElementById("Button");
-                ele.style.display = "none";
+                var ele1 = document.getElementById("Button1");
+                var ele2 = document.getElementById("Button2");
+                ele2.style.display = "block";
+                ele1.style.display = "none";
                 console.log("审批节点")
                 var result = JSON.parse(item.formInstValue);
                 this.jsonData = JSON.parse(item.formInstSheetStr)
@@ -227,7 +233,7 @@ export default {
                 this.clickitem.formValue = str
                 var Params = {
                     form_inst_id: this.clickitem.id,
-                    editor: this.$store.state.user.realName,
+                    editor: this.$store.state.user.userId,
                     task_id: this.clickitem.taskId,
                     proc_inst_id: this.clickitem.procInstId,
                     form_model_id: this.clickitem.formModelId,
@@ -242,7 +248,7 @@ export default {
                     contentType: "application/json; charset=utf-8",
                     data: Params
                 }).then( res => {
-                    if(res.data.status == 200) {
+                    if(res.data.code == 200) {
                         this.$message({
                             type: 'success',
                             message: '该经办节点处理成功',
@@ -263,44 +269,129 @@ export default {
             })
         },
         //审批节点同意按钮
-        Approve(item) {
-            this.getKey(item);
-            console.log(item)
-            var Params = {
-                form_inst_id: this.clickitem.id,
-                approve_result: 0,
-                editor: this.$store.state.user.realName,
-                task_id: this.clickitem.taskId,
-                form_inst_value: this.clickitem.formValue
-            }
-            console.log(Params)
-            this.$ajax({
-                url:'/my-api/form_inst/approval_node',
-                method: 'post',
-                contentType: "application/json; charset=utf-8",
-                data: Params
-            }).then( res => {
-                if(res.data.status == 200) {
-                    this.$message({
-                        type: 'success',
-                        message: '该审批节点处理成功',
-                    });
-                    this.dialogVisible = true;
-                    this.reload();
-                } else {
-                    this.$message({
-                        type: 'error',
-                        message: '该审批节点处理失败',
-                    });
+        // Approve(item) {
+        //     this.getKey(item);
+        //     console.log(item)
+        //     var Params = {
+        //         form_inst_id: this.clickitem.id,
+        //         approve_result: 0,
+        //         editor: this.$store.state.user.accountName,
+        //         task_id: this.clickitem.taskId,
+        //         form_inst_value: this.clickitem.formValue
+        //     }
+        //     console.log(Params)
+        //     this.$ajax({
+        //         url:'/my-api/form_inst/approval_node',
+        //         method: 'post',
+        //         contentType: "application/json; charset=utf-8",
+        //         data: Params
+        //     }).then( res => {
+        //         if(res.data.status == 200) {
+        //             this.$message({
+        //                 type: 'success',
+        //                 message: '该审批节点处理成功',
+        //             });
+        //             this.dialogVisible = true;
+        //             this.reload();
+        //         } else {
+        //             this.$message({
+        //                 type: 'error',
+        //                 message: '该审批节点处理失败',
+        //             });
+        //         }
+        //     }).catch( error => {
+        //         console.log()
+        //     })
+        // },
+        Submit2() {
+            //拿到新填写的表单信息
+            this.$refs.generateForm.getData().then(data => {
+                console.log(data)
+                var str = "\""+JSON.stringify(data)+"\"";
+                this.clickitem.formValue = str
+                var Params = {
+                    approve_result: 1,
+                    form_inst_id: this.clickitem.id,
+                    editor: this.$store.state.user.userId,
+                    task_id: this.clickitem.taskId,
+                    proc_inst_id: this.clickitem.procInstId,
+                    form_model_id: this.clickitem.formModelId,
+                    form_inst_sheet: JSON.parse(this.clickitem.formInstSheetStr),
+                    form_inst_value: this.clickitem.formValue.slice(1, -1)
+                    // form_inst_value: str.slice(1, -1)
                 }
-            }).catch( error => {
-                console.log()
+                console.log(Params)
+                this.$ajax({
+                    url:'/my-api/form_inst/approval_node',
+                    method: 'post',
+                    contentType: "application/json; charset=utf-8",
+                    data: Params
+                }).then( res => {
+                    if(res.data.code == 200) {
+                        this.$message({
+                            type: 'success',
+                            message: '该审批节点处理成功',
+                        });
+                        this.dialogVisible = true;
+                        this.reload();
+                    } else {
+                        this.$message({
+                            type: 'error',
+                            message: '该审批节点处理失败',
+                        });
+                    }
+                }).catch( error => {
+                    console.log()
+                })
+            }).catch(e => {
+                console.log("数据校验失败")
             })
         },
         //审批节点不同意按钮
         disApprove(item) {
             console.log(item)
-            alert("涉及流程回滚，暂未实现")
+            // alert("涉及流程回滚，暂未实现")
+            this.$refs.generateForm.getData().then(data => {
+                console.log(data)
+                var str = "\""+JSON.stringify(data)+"\"";
+                this.clickitem.formValue = str
+                var Params = {
+                    approve_result: 0,
+                    form_inst_id: this.clickitem.id,
+                    editor: this.$store.state.user.userId,
+                    task_id: this.clickitem.taskId,
+                    proc_inst_id: this.clickitem.procInstId,
+                    form_model_id: this.clickitem.formModelId,
+                    form_inst_sheet: JSON.parse(this.clickitem.formInstSheetStr),
+                    form_inst_value: this.clickitem.formValue.slice(1, -1)
+                    // form_inst_value: str.slice(1, -1)
+                }
+                console.log(Params)
+                this.$ajax({
+                    url:'/my-api/form_inst/approval_node',
+                    method: 'post',
+                    contentType: "application/json; charset=utf-8",
+                    data: Params
+                }).then( res => {
+                    if(res.data.code == 200) {
+                        this.$message({
+                            type: 'success',
+                            message: '该审批节点处理不同意成功',
+                        });
+                        this.dialogVisible = true;
+                        this.reload();
+                    } else {
+                        this.$message({
+                            type: 'error',
+                            message: '该审批节点处理失败',
+                        });
+                    }
+                }).catch( error => {
+                    console.log()
+                })
+            }).catch(e => {
+                console.log("数据校验失败")
+            })
         },
         //将毫秒数转换成日期格式
         getTime(str) {

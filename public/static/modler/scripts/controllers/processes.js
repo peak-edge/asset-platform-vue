@@ -116,6 +116,7 @@ angular.module('flowableModeler')
 	  $scope.createProcess = function(mode) { //创建新的流程图时候执行
       flag66=0;
        localStorage.clear();
+     
 	    var modalInstance = _internalCreateModal({
 	        template: 'views/popup/process-create.html?version=' + Date.now()
 	    }, $modal, $scope);
@@ -142,21 +143,22 @@ angular.module('flowableModeler')
      // {id: "edf5a926-b1d9-11e9-a4f5-0e0b7ec70eea", name: "sdgf", key: "234", description: "", createdBy: "admin", …}
 		  if (process) { 
 		      $rootScope.editorHistory = [];
+          $location.path("/editor/" + process.id);
 console.log(process.id)
-                 jQuery.ajax({ 
-                type: "GET",
-                contentType:"application/json;charset=utf-8",
-                url: `/modler/proc_model/proc_node_num?proc_model_id=${process.id}`,
-                dataType:'json',
-                success:function(result){              
-                   localStorage.setItem('count',result.obj)
-                   $location.path("/editor/" + process.id);
-                },
-                error:function(err){
-                     console.log('上一次未保存，这次获取上一次保存的节点数')
-                     $location.path("/editor/" + process.id);
-                }
-            });
+            //      jQuery.ajax({ 
+            //     type: "GET",
+            //     contentType:"application/json;charset=utf-8",
+            //     url: `/modler/proc_model/proc_node_num?proc_model_id=${process.id}`,
+            //     dataType:'json',
+            //     success:function(result){              
+            //        localStorage.setItem('count',result.obj)
+            //        
+            //     },
+            //     error:function(err){
+            //          console.log('上一次未保存，这次获取上一次保存的节点数')
+            //          $location.path("/editor/" + process.id);
+            //     }
+            // });
 
               
 

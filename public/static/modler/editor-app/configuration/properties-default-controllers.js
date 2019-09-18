@@ -70,6 +70,7 @@ angular.module('flowableModeler').controller('FlowableBooleanPropertyCtrl', ['$s
                                 var defaultFlowProp = flows[i].properties.get('oryx-defaultflow');
                                 if (defaultFlowProp) {
                                     flows[i].setProperty('oryx-defaultflow', false, true);
+                                    flows[i].setProperty('oryx-conditionsequenceflow',$scope.property.value);
                                 }
                             }
                         }

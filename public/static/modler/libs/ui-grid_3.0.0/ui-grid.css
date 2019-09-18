@@ -127,6 +127,9 @@
 .ui-grid-header-canvas:after {
   clear: both;
 }
+.ui-grid-header-canvas{
+  width:200px !important;
+}
 .ui-grid-header-cell-wrapper {
   position: relative;
   display: table;

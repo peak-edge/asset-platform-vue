@@ -12,19 +12,16 @@
 			    <div class="middle1">
 			    	<div style="height:380px;display:block">
 		    			<span onclick="gplus();" class="glyphicon glyphicon-plus"></span>
-	          			<span id="gminus" class="glyphicon glyphicon-minus"></span>
 	          			<input id="forgids" name="forgids" type="hidden" ng-model="forgids"/>
 	          			<input id="forgnames" name="forgnames" type="hidden"  ng-model="forgnames"/>
 	          			<input id="liorgnames" name="liorgnames" type="hidden" />
 			        </div>
 			    </div>
 			    <div class="right1">
-			    
-                            <ul id="resultsZtree" class="ztree">
-                                    <li style='height:30px;'>名称<li>
-                                    <li style='height:30px;'>校宣传办<li>
-                                   </ul>
-			      
+			    	<ul id="resultsZtree" class="ztree">
+                        <li style='height:30px;'>名称</li>
+                    
+			       	</ul>
 			    </div>
             </div>
             <div class="modal-footer">
@@ -34,10 +31,7 @@
         </div>
     </div>
 <!-- ztree树的初始化 -->
-<script type="text/javascript">
-     
-     
-
+<script type="text/javascript">  
 	var setting = {
 		check: {
             enable: true,
@@ -52,6 +46,7 @@
 			onCheck:zTreeOnClick   
 		}
 	};
+
 	// var zNodes =[
  //        { id:1, pId:0, name:"浙江省财政厅", open:true},
 
@@ -157,6 +152,8 @@
                             }
                         }
                         recurse(data, "");
+                          arr.push({id:'chenyuchen',name:'本部门',pId:0,open:true})
+                          console.log(arr)
                         return arr;
           }
 
@@ -171,7 +168,7 @@
                     "authorization":token
                  },
                 success: function(result){
-                   jQuery.fn.zTree.init(jQuery("#orgZtree"),setting,dubRemove(unflatten(result.obj)));
+                   jQuery.fn.zTree.init(jQuery("#orgZtree"),setting,dubRemove(unflatten(result.data)));
                 },
                 error:function(err){
                     console.log(err)
