@@ -39,6 +39,7 @@ angular.module('flowableModeler').controller('FlowableUsernamesPopupCtrl',
         }
 
            $scope.save = function () {
+
             $scope.property.value = {};
             $scope.property.value.usernames = jQuery('#fusernames').val();
             $scope.property.value.userids = jQuery('#fuserids').val();

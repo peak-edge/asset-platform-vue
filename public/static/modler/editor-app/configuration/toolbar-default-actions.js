@@ -23,7 +23,7 @@ FLOWABLE.TOOLBAR = {
             }, services.$modal, services.$scope);
         },
         
-        validate: function(services) {
+        validate: function(services){
         	_internalCreateModal({
                 backdrop: true,
                 keyboard: true,
@@ -377,7 +377,6 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
 
         if (!$scope.saveDialog.name || $scope.saveDialog.name.length == 0 ||
         	!$scope.saveDialog.key || $scope.saveDialog.key.length == 0) {
-        	
             return;
         }
 
@@ -435,23 +434,63 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
                 var temp=0;
                 var max=0;
                 var isJoin=0;
-                var roles,users,groups;
+                var roles,users,groups,usersid;
+                var INTATOR='';
+                var CUR_SECTION=''
+                var startPerson=''
+                var startBus=''
+                var orgsArr=[];
+                var usersArr=[];
                 for(var i=0;i<needDate.childShapes.length;i++){
                     var property=needDate.childShapes[i].properties;
                    if(property.documentation==1||property.documentation==2||property.documentation==3){
-                   
-                    if(property.roles){
-                      
+                 
+                    if(property.roles){                   
                         roles=property.roles.userids.split(",").join('|');
-
                     }
                     if(property.users){
+                        if(property.users.usernames.search('发起人')){
+                            INTATOR='INTATOR'
+                        }
+                        if(property.users.usernames.search('所属部门')){
+                            CUR_SECTION='CUR_SECTION'
+                        }
+                         if(INTATOR){
+                            startPerson='INTATOR'
+                        }else{
+                            startPerson=''
+                        }
 
-                        users=property.users.userids.split(",").join('|');
+
+                         if(CUR_SECTION){
+                            startBus='CUR_SECTION'
+                        }else{
+                             startBus=''
+                        }
+                        property.users.userids=property.users.userids.replace(/,INTATOR/g,'');
+                        property.users.userids=property.users.userids.replace(/,CUR_SECTION/g,'');
+                        users=property.users.usernames.split(",")
+                        usersid=property.users.userids.split(",")
+                
+                                // for(var k=0;k<users.length;k++){
+                                //     if(usersid[k]){
+                                //         if(usersid[k].search('@人员')!=-1){ //字符串中是否含有子字符串
+                                //             usersid[k]=usersid[k].replace(/@人员/g,'');
+                                //             usersArr.push(usersid[k])
+                                //         }else{
+                                //             orgsArr.push(usersid[k])
+                                //         }
+                                //     }
+                                    
+                                // }
+                                // usersArr=usersArr.join('|');
+                                // orgsArr=orgsArr.join('|');
+                                // console.log(users,usersArr,orgsArr)
+                      
                     }
                     if(property.orgs){
                      
-                        groups=property.orgs.orgids.replace(/chenyuchen/g, "CANDIDATE_GROUP_CUR_SECTION").split(",").join('|')
+                        //groups=property.orgs.orgids.replace(/chenyuchen/g, "CANDIDATE_GROUP_CUR_SECTION").split(",").join('|')
                     }
 
                     if(property.multiinstance_condition){
@@ -459,15 +498,8 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
                     }else{
                         isJoin=0;
                     }
-                    var pe;
-                    if(roles&&users){
-                         pe=roles+"|"+users;
-                    }else if(roles){
-                         pe=roles;
-                    }else{
-                        pe=users;
-                    }
-
+   
+     
                      var item={
                         'act_id':property.overrideid,
                         'act_type':property.documentation,
@@ -487,17 +519,18 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
                                     }
                           },
                         "limit_time": property.duedatedefinition,
-                        "candidate_user":pe,
-                        "candidate_group": groups,
+                        "candidate_user":usersArr?(usersArr+startPerson):(usersArr+'|'+startPerson),
+                        "candidate_group": orgsArr?(orgsArr+startBus):(orgsArr+'|'+startBus),
                         "overtime_strategy": 1,
-                        "todo_strategy": " ",
+                        "todo_strategy":" ",
                         "if_joint_sign":isJoin
                          }
+                         console.log("人员="+item.candidate_user)
+                         console.log("部门="+item.candidate_group)
                      list.push(item);
                      roles='';
                      users='';
                      groups=''
-
                 }
                }  
 
@@ -513,38 +546,6 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
                 dataType:'json',
                 success: function(result){
                     console.log(result)
-                   // if(result.code==200){
-                   //          if(flag66==0){
-                   //                    jQuery.ajax({ 
-                   //                      type: "POST",
-                   //                      contentType:"application/json;charset=utf-8",
-                   //                      url: `/modler/proc_model/proc_node_num?proc_model_id=${needDate.modelId}&proc_node_num=${max}`,
-                   //                      dataType:'json',
-                   //                      success:function(result){  
-                   //                         flag66=1;
-                   //                         console.log('第一次保存count='+max)
-                          
-                   //                      },
-                   //                      error:function(err){
-                   //                          console.log(err)                   
-                   //                      }
-                   //                  });
-                   //          }else{
-                              
-                   //              jQuery.ajax({
-                   //                  type:'PUT',
-                   //                  url:`/modler/proc_model/proc_node_num?proc_model_id=${needDate.modelId}&proc_node_num=${max}`,
-                   //                 // dataType: "html",
-                   //                  success:function(res){
-                   //                      console.log('其他几次保存')
-                   //                  },
-                   //                  error:function(res){
-                   //                      console.log(res)
-                   //                  }
-                   //              })
-                   //          }
-                   //  //localStorage.setItem('idcount',{'count':max,'modelId':needDate.modelId})
-                   // }
                   
                 },
                 error:function(err){
@@ -571,18 +572,18 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
                     if(nodes[i].stencil.id=='SequenceFlow'){
                           if(nodes[i].properties.conditionsequenceflow.formProperties){
                              if(!isNaN(nodes[i].properties.conditionsequenceflow.formProperties[0].variable)){
-                                 objs[nodes[i].resourceId]= "${"+nodes[i].properties.conditionsequenceflow.formProperties[0].key+" "+nodes[i].properties.conditionsequenceflow.formProperties[0].type+" "+nodes[i].properties.conditionsequenceflow.formProperties[0].variable+"}"
+                                 objs[nodes[i].resourceId]= "{"+nodes[i].properties.conditionsequenceflow.formProperties[0].key+" "+nodes[i].properties.conditionsequenceflow.formProperties[0].type+" "+nodes[i].properties.conditionsequenceflow.formProperties[0].variable+"}"
 
                              }else{
-                                objs[nodes[i].resourceId]= "${"+nodes[i].properties.conditionsequenceflow.formProperties[0].key+" "+nodes[i].properties.conditionsequenceflow.formProperties[0].type+" "+"'"+nodes[i].properties.conditionsequenceflow.formProperties[0].variable+"'"+"}"
+                                objs[nodes[i].resourceId]= "{"+nodes[i].properties.conditionsequenceflow.formProperties[0].key+" "+nodes[i].properties.conditionsequenceflow.formProperties[0].type+" "+"'"+nodes[i].properties.conditionsequenceflow.formProperties[0].variable+"'"+"}"
 
                              }
                              if(nodes[i].properties.conditionsequenceflow.formProperties[0].type=='=='){
-                                    objs[nodes[i].resourceId]= "${"+nodes[i].properties.conditionsequenceflow.formProperties[0].key+" "+"eq"+" "+"'"+nodes[i].properties.conditionsequenceflow.formProperties[0].variable+"'"+"}"
+                                    objs[nodes[i].resourceId]= "{"+nodes[i].properties.conditionsequenceflow.formProperties[0].key+" "+"eq"+" "+"'"+nodes[i].properties.conditionsequenceflow.formProperties[0].variable+"'"+"}"
 
                              }
                              if(nodes[i].properties.conditionsequenceflow.formProperties[0].type=='!='){
-                                    objs[nodes[i].resourceId]= "${"+nodes[i].properties.conditionsequenceflow.formProperties[0].key+" "+"ne"+" "+"'"+nodes[i].properties.conditionsequenceflow.formProperties[0].variable+"'"+"}"
+                                    objs[nodes[i].resourceId]= "{"+nodes[i].properties.conditionsequenceflow.formProperties[0].key+" "+"ne"+" "+"'"+nodes[i].properties.conditionsequenceflow.formProperties[0].variable+"'"+"}"
 
                              }
                        // add(arrcon[i].resourceId,"${"+arrcon[i].properties.conditionsequenceflow.formProperties[0].key+" "+arrcon[i].properties.conditionsequenceflow.formProperties[0].type+" "+"'"+arrcon[i].properties.conditionsequenceflow.formProperties[0].variable+"'"+"}")
@@ -776,11 +777,9 @@ angular.module('flowableModeler').controller('ValidateModelCtrl',['$scope', '$ht
         $scope.status = {
             loading: true
         };
-
         $scope.model = {
         	errors: []
-        };
-        
+        };       
         $scope.errorGrid = {
             data: $scope.model.errors,
             headerRowHeight: 28,
@@ -813,11 +812,10 @@ angular.module('flowableModeler').controller('ValidateModelCtrl',['$scope', '$ht
             url: FLOWABLE.URL.validateModel(),
             method: 'POST',
             cache: false,
-            headers: {
+            headers:{
                 "Content-Type":"application/json;charset=utf-8"
             },
-            data: model
-            
+            data: model      
         }).then(function(response){
         	$scope.status.loading = false;
             response.data.forEach(function (row) {

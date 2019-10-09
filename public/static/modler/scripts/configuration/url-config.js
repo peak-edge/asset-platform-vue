@@ -213,7 +213,7 @@ FLOWABLE.APP_URL = {
     },
 
     getCaseInstancesModelJsonUrl: function (modelId) {
-        return FLOWABLE.CONFIG.contextRoot + '/app/rest/case-instances/' + modelId + '/model-json';
+        return FLOWABLE.CONFIG.contextRoot +'/app/rest/case-instances/' + modelId + '/model-json';
     },
 
     getCaseDefinitionModelJsonUrl: function (caseDefinitionId) {

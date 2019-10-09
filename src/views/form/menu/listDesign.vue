@@ -68,7 +68,7 @@
                     <!-- 字段设置 -->
                     <el-tab-pane label="字段设置" name="first" class="firstTab">
                         <span>查询条件</span>
-                        <el-dropdown style="float:right;margin-right:0px">
+                        <el-dropdown style="float:right;margin-right:0px;font-family:'黑体';font-size:13px !important">
                             <span>
                                 <i class="el-icon-plus" style="float:right;color:#409EFF;font-weight:800;margin-top:5px;"></i>
                             </span>
@@ -77,14 +77,15 @@
                             </el-dropdown-menu>
                         </el-dropdown>
                         <br>
+                        <div style='clear:both'></div>
                         <div v-for="item in selectlists" :label="item" :key="item">
-                            <p>{{item}}</p>
+                            <p style="font-family:'黑体';font-size:15px;">{{item}}</p>
                         </div>
                         <span>列表字段</span>
-                        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange" style="float:right;margin-right:0px;margin-top:5px">全选&nbsp;&nbsp;</el-checkbox>
-                        <div style="margin: 15px 0;"></div>
-                        <el-checkbox-group v-model="checkedlists" @change="handleCheckedListsChange" style="line-height:1.5">
-                            <el-checkbox v-for="item in lists" :label="item" :key="item" style="float:right;margin-right:0px">{{item}}</el-checkbox>
+                        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange" style="margin-right:0px;margin-top:5px;float:right">全选&nbsp;&nbsp;</el-checkbox>
+                        <div style="margin: 10px 0;clear:both"></div>
+                        <el-checkbox-group v-model="checkedlists" @change="handleCheckedListsChange" style="line-height:1.5;height:200px;border:1px solid green">
+                            <el-checkbox v-for="item in lists" :label="item" :key="item" style="margin-right:0px;width:100px;color:red;border:1px solid red;display:block;">{{item}}</el-checkbox>
                         </el-checkbox-group>
                     </el-tab-pane>
                     <!-- 列表设置 -->
@@ -112,7 +113,7 @@
 </template>
 
 <script>
-const listOptions = ['创建人', '所有者', '所属部门', '创建时间', '修改时间', '公司名称', '联系电话', '性别', '地址', '联系人', '流程状态', '节点名称', '当前处理人'];
+const listOptions = ['创建人', '所有者', '所属部门',  ];
 export default {
     name: 'listDesign',
     data() {

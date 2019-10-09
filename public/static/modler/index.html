@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="libs/bootstrap-tour_0.9.1/bootstrap-tour.min.css"/>
     <link rel="stylesheet" href="libs/angular-spectrum-colorpicker_1.0.13/spectrum.css"/>
     <!-- endbuild -->
-
+  <link rel="stylesheet" type="text/css" href="sementic/dist/semantic.min.css">
     <link rel="Stylesheet" media="screen" href="editor-app/editor/css/editor.css?v=2" type="text/css"/>
     <!-- build:css styles/style.css -->
     <link href="styles/common/style.css" rel="stylesheet">
@@ -122,20 +122,31 @@
 
     <div id="main" class="wrapper full clearfix" ng-view="" ng-cloak ng-style="{height: window.height + 'px'}">
     </div>
-
+</body>
 <!--[if lt IE 9]>
 <script src="libs/es5-shim-15.3.4.5/es5-shim.js"></script>
 <script src="libs/json3_3.2.6/lib/json3.min.js"></script>
 <![endif]-->
-<script>
-   var  listObj=[];
-   
-    flag66=0;
-     var token=this.$store.state.user.token
-</script>
-<script src="libs/jquery_1.11.0/jquery.min.js"></script>
-<script src="libs/jquery-ui-1.10.3.custom.min.js"></script>
 
+ <script src="libs/jquery_1.11.0/jquery.min.js"></script> 
+
+<!-- <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script> -->
+<script src="libs/jquery-ui-1.10.3.custom.min.js" ></script>
+<!-- <script src="libs/jquery.address.js"></script>  -->
+<!-- <script src="libs/jquery.min.js"></script>  -->
+<script src="sementic/dist/semantic.min.js"></script>
+
+<script>
+
+
+     var  listObj=[];
+     flag66=0;
+     var modelId;
+      var nodesArr=[]//经办人标记；
+     var token=this.$store.state.user.token;
+
+  
+</script>
 <script src="libs/angular_1.3.13/angular.min.js"></script>
 <script src="libs/angular-animate_1.3.13/angular-animate.min.js"></script>
 <script src="libs/bootstrap_3.1.1/js/bootstrap.min.js"></script>
@@ -292,5 +303,6 @@
 
 <!-- Integration extensions -->
 <script src="scripts/resource-loader.js?v=2" app="editor"></script>
-</body>
+
+
 </html>

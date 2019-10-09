@@ -157,7 +157,26 @@ angular.module('flowableModeler').controller('FlowableConditionExpressionPopupCt
         // Click handler for add button
                var propertyIndex = 1;
     
-     
+             function dubRemove(arr){ //数组去重
+                let res=[]; 
+                let repeat=[];
+                for(let i=0;i<arr.length;i++){
+                    let formItemKey=arr[i].key;
+                    if(!repeat[formItemKey]){
+                        res.push(arr[i]);
+                        repeat[formItemKey]=1
+                    }else{
+                      for(let k=0;k<i;k++){
+                        if((arr[k].key)==formItemKey){
+                            res.splice(arr[k],1);//删除数组中某一项
+                        }
+                      }
+                       res.push(arr[i]);
+                       repeat[formItemKey]=1
+                    }
+                }
+                return res;
+        }
              for(var i=0;i<listObj.length;i++){
   
                 var newProperty={
@@ -167,10 +186,11 @@ angular.module('flowableModeler').controller('FlowableConditionExpressionPopupCt
                     type1:listObj[i].type1,
                     rules:listObj[i].rulesType
                 }     
-                console.log(newProperty)        
-                if(listObj.length>$scope.formProperties.length) $scope.formProperties.push(newProperty);
+             $scope.formProperties.push(newProperty);
+  
+               
             }
-        
+
             $timeout(function (){
                 $scope.gridApi.selection.toggleRowSelection(newProperty);
             });

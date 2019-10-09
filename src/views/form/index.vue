@@ -2,7 +2,7 @@
     <div class="form-container">
         <el-container>
             <el-header>
-                <el-menu
+                <el-menu  style='float:left;margin-left:100px'
                     router
                     :default-active="$route.path"
                     class="el-menu-demo"
@@ -12,8 +12,8 @@
                     active-text-color="#ffd04b">
                     <el-menu-item index="/form/formDesign"><svg-icon icon-class="icon-formdesign"/>&nbsp;表单设计</el-menu-item>
                     <el-menu-item index="/form/flowDesign"><svg-icon icon-class="icon-flowdesign"/>&nbsp;流程设计</el-menu-item>
-                    <el-menu-item index="/form/listDesign"><svg-icon icon-class="icon-listdesign"/>&nbsp;列表设计</el-menu-item>
-                    <el-menu-item index="/form/formSetting"><svg-icon icon-class="icon-formsetting"/>&nbsp;表单设置</el-menu-item>
+             <!--        <el-menu-item index="/form/listDesign"><svg-icon icon-class="icon-listdesign"/>&nbsp;列表设计</el-menu-item>
+                    <el-menu-item index="/form/formSetting"><svg-icon icon-class="icon-formsetting"/>&nbsp;表单设置</el-menu-item> -->
                 </el-menu>
                 <div class="right-tabs">
                     <div><span @click="toBack()">返回</span></div>

@@ -1,7 +1,9 @@
 <template>
     <el-container class="home-container">
+
         <el-header>
             <img class="logo" src="https://cn.vuejs.org/images/logo.png">
+            <span style='display:inline-block;font-size:20px;float:left;font-weight:540;margin-top:5px;color:rgb(0,33,64)'>资产云</span>
             <el-input
                 placeholder="请输入内容"
                 prefix-icon="el-icon-search"
@@ -42,9 +44,9 @@
                     <el-button class="button1" shadow="hover"  @click="dialogVisible=true">
                         <svg-icon icon-class="icon-add" style="font-size:28px;"/> &nbsp;新建应用
                     </el-button>
-                    <el-button class="button2" shadow="hover" v-for="(item,index) in applist" :key="index" @click="toAppInfomation(item.id,item.iconCls,item.applicationName,item.path)"> 
+                  <!--   <el-button class="button2" shadow="hover" v-for="(item,index) in applist" :key="index" @click="toAppInfomation(item.id,item.iconCls,item.applicationName,item.path)"> 
                         <svg-icon :icon-class="item.iconCls" style="font-size:23px;"/> &nbsp;{{item.applicationName}}
-                    </el-button>
+                    </el-button> -->
                 </el-col>
                 <el-col :span="2">
                     <el-dropdown trigger="click" style="margin-top:5px;">
@@ -66,7 +68,7 @@
                 <el-col :span="15">
                 <div class="grid-content bg-purple">
                     <div class="shared-head">
-                        <span class="head__title"> 我的流程</span>
+                        <span class="head__title">我的流程</span>
                         <div class="message__more">全部</div>
                     </div>
                     <ul class="work-list__content">
@@ -124,14 +126,15 @@
             <el-row :gutter="20">
                 <el-col :span="6" v-for="(item,index) in scenesByUser" :key="index" :index="String(index)">
                     <el-card style="min-height:140px;margin-bottom:10px">
-                        <el-radio v-model="radio" :label="index">{{item.sceneName}}</el-radio>
+                        <el-radio v-model="radio" :label="index">{{item.sceneName}}
                         <div style="margin-top:20px;">
-                            <el-tooltip class="item" effect="dark" :content="item.id" placement="bottom">
-                                <viewer :images="images">
+                            <el-tooltip  class="item" effect="dark" :content="item.sceneName" placement="bottom">
+                        <!--         <viewer :images="images"> -->
                                     <img :src="imgUrl" alt="场景图片" style="width:100%;height:100%"/>
-                                </viewer>
+                               <!--  </viewer> -->
                             </el-tooltip>
                         </div>
+                        </el-radio>
                     </el-card>
                 </el-col>
             </el-row>
@@ -171,9 +174,9 @@
                         <el-radio v-model="checkedradio" :label="item">{{item.sceneName}}</el-radio>
                         <div style="margin-top:20px;">
                             <el-tooltip class="item" effect="dark" :content="item.id" placement="bottom">
-                                <viewer :images="images">
+                                <!-- <viewer :images="images"> -->
                                     <img :src="imgUrl" alt="场景图片" style="width:100%;height:100%"/>
-                                </viewer>
+                             <!--    </viewer> -->
                             </el-tooltip>
                         </div>
                     </el-card>
@@ -283,10 +286,9 @@ export default {
     },
     mounted () {
         this.$nextTick( function(){
-            this.checkScene(1)
-            this.getSceneByUser(1)//获取用户对应的场景
-            this.getAppList(1)
-            this.myFlowList(1)
+            this.handleLogin()
+        
+
             // this.getAllMenus(1)
         })
     },
@@ -354,6 +356,58 @@ export default {
             console.log(`当前页: ${val}`);
             this.currentPage2 = val
             this.getSceneByUser()
+        },
+        handleLogin() {
+
+                    var Params = {
+                        accountName: 'chenxu',
+                        pwd: '123'
+                    }
+        
+                    this.$ajax({
+                        url:'/dev-api/login',
+                        method: 'post',
+                        contentType: "application/json; charset=utf-8",
+                        data: Params
+                    }).then( res => {
+                        if(res.data.code == 200) {
+                            console.log("1")
+                            this.$store.state.user.token = res.data.data.Authorization
+                            console.log("2")
+
+                            this.$store.state.user.accountName = res.data.data.accountName
+                            console.log("3")
+
+                            this.$store.state.user.userId = res.data.data.userId
+                            console.log("4")
+
+                            this.$store.state.user.realName = res.data.data.realName
+                            console.log("5")
+
+                            this.$store.state.user.loadScene = []
+                            console.log("6")
+
+                            // console.log(this.$store.state.user.token)
+                            //判断平台管理员和终端用户
+                            // if(res.data.data.admin==1)
+                            //     this.$router.push({path: '/adminhome'})
+                            // else{
+                            //     this.$router.push({path: '/home', query:{fromLogin:'true'}})
+                            // }
+                                this.checkScene()
+                                this.getSceneByUser()//获取用户对应的场景
+                                this.getAppList()
+                                this.myFlowList()
+                        }
+                        else {
+                            this.$message.error(res.data.msg);
+                        }
+                    }).catch( error => {
+                        this.loading = false
+                    })
+           
+            
+
         },
         //为用户装载工作场景
         toLoadScene() {
@@ -558,7 +612,7 @@ export default {
                 headers: Params2
             }).then( res => {
                 this.applist=[]
-                console.log(res)
+                console.log("res="+res)
                 for(let i=0;i<res.data.data.length;i++)
                 {
                     let obj = {}
@@ -568,9 +622,9 @@ export default {
                     obj.path = res.data.data[i].path
                     this.applist.push(obj)
                 }
-                console.log(this.applist)
+                console.log(666)
             }).catch( error => {
-                console.log()
+                console.log(777)
             })
         },
         //得到我的流程的数据
@@ -667,7 +721,7 @@ export default {
             var Params2 = {
                 Authorization: this.$store.state.user.token,
             }
-            console.log(Params)
+
             this.$ajax({
                 url:'/dev-api/resource/app/add',
                 method: 'post',

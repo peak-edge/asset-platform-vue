@@ -9,6 +9,39 @@
   - Filter color: #373e48
   - Dark highlight: #606b7d
 */
+.tab{
+    border:none;padding:0px 15px;box-sizing: border-box;height:150px;
+}
+.level0{
+    text-decoration:none;
+    color:#000;
+}
+ul.ztree{
+    border:none !important;
+    background:#fff;
+    overflow-y:none !important;
+    height:600px;
+}
+.yin{
+    height:25px !important;
+    line-height:25px !important;
+    background:#b7cce6;
+    padding:0 6px !important;
+    display:inline-block;
+    margin:5px !important;
+    border:1px solid #ededed;
+    border-radius:3px;
+    box-sizing: border-box;
+
+}
+.level0 span{
+    display:inline-block;
+    line-height:25px;
+    font-size:14.5px;
+    font-family:"黑体";
+}
+.level0:link,.level0:visited{color:#000;text-decoration:none;}
+.level0:hover{color:#000;text-decoration:none;background:none;}
 .list-group{
     border-top:1px solid #ededed;
     border-top-left-radius:6px;

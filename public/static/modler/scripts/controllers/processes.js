@@ -27,7 +27,6 @@ angular.module('flowableModeler')
         filters: [
             {id: 'processes', labelKey: 'PROCESSES'}
 		],
-
 		sorts: [
 		        {id: 'modifiedDesc', labelKey: 'MODIFIED-DESC'},
 		        {id: 'modifiedAsc', labelKey: 'MODIFIED-ASC'},
@@ -144,7 +143,8 @@ angular.module('flowableModeler')
 		  if (process) { 
 		      $rootScope.editorHistory = [];
           $location.path("/editor/" + process.id);
-console.log(process.id)
+          modelId=process.id
+          console.log(process.id)
             //      jQuery.ajax({ 
             //     type: "GET",
             //     contentType:"application/json;charset=utf-8",

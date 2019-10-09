@@ -126,13 +126,6 @@ export default {
                 if (valid) {
                     this.loading = true
 
-                    // login(this.loginForm).then(response => {
-                    //     // this.$router.push({ path: this.redirect || '/home' })
-                    //     this.loading = false
-                    // }).catch(() => {
-                    //     this.loading = false
-                    // })
-
                     var Params = {
                         accountName: this.loginForm.accountName,
                         pwd: this.loginForm.pwd
@@ -175,7 +168,6 @@ export default {
                         }
                     }).catch( error => {
                         this.loading = false
-                        console.log()
                     })
                 } else {
                     console.log('error submit!!')

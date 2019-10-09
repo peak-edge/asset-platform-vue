@@ -258,40 +258,15 @@ export default {
                 this.formlist = res.data.data
                 this.getFormList();
                 this.getFormInfo();
-                // console.log(res.data)
-                // this.formlist=[]
-                // this.formlist = res.data.obj[0].group
-                // console.log(this.formlist)
-                // this.buttonlist = []
-                // // console.log(this.activeKey)
-                // // console.log(this.buttonlist)
-                // // console.log(this.formlist[0].children[0])
-                // for(let j=0;j<this.formlist[0].children[0].children.length;j++)
-                //     {
-                //         let obj2 = {}
-                //         obj2.id = this.formlist[0].children[0].children[j].id
-                //         obj2.name = this.formlist[0].children[0].children[j].name
-                //         obj2.iconCls = this.formlist[0].children[0].children[j].iconCls
-                //         obj2.path = this.formlist[0].children[0].children[j].path
-                //         obj2.sort = this.formlist[0].children[0].children[j].sort
-                //         this.buttonlist.push(obj2)
-                //     }
-                // console.log(this.buttonlist)
-                // this.buttonlist1 = []
-                // this.buttonlist2 = []
-                // for(let k=0;k<this.buttonlist.length;k++)
-                // {
-                //     if(this.buttonlist[k].path.indexOf("list")!=-1)
-                //         this.buttonlist1.push(this.buttonlist[k])
-                //     else if(this.buttonlist[k].path.indexOf("form")!=-1)
-                //         this.buttonlist2.push(this.buttonlist[k])
-                // }
-                // console.log(this.buttonlist1)
-                // console.log(this.buttonlist2)
-                // this.getFormInfo();
             }).catch( error => {
                 console.log()
             })
+        },
+        //图片
+        getPicture(row) {
+            console.log(row)
+            var src = '/my-api/admin/proc_inst/diagram?proc_inst_id='+ row.procInstId
+            return src
         },
         //得到导航栏的选中信息
         handleSelect(key, keyPath) {
@@ -351,13 +326,13 @@ export default {
                         this.ybyid = ybyapplist[i].id
                     }
                 }
-                console.log(this.ybyid)
+
                 var Params2 = {
                     app_id: this.ybyid,
                     group_id: -1,
                     form_status: 0
                 }
-                console.log(Params)
+
                 this.$ajax({
                     url:'/my-api/form_model/models',
                     method: 'get',
@@ -537,11 +512,9 @@ export default {
                 seconds=year.getSeconds()
             return year.getFullYear()+'-'+month+'-'+year.getDate()+'  '+hours+':'+minutes+':'+seconds;
         },
-        getPicture(row) {
-            console.log(row)
-            var src = '/my-api/admin/proc_inst/diagram?proc_inst_id='+ row.procInstId
-            return src
-        },
+
+
+
         //返回主页面
         toHome() {
             this.$router.push({

@@ -170,7 +170,7 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
         var quickMenuItems = []; //工具箱里面的快捷键
 
         var morphRoles = [];
-        for (var i = 0; i < data.rules.morphingRules.length; i++) {
+        for (var i = 0; i < data.rules.morphingRules.length; i++){
                 var role = data.rules.morphingRules[i].role;
                 var roleItem = { 'role': role, 'morphOptions': [] };
                 morphRoles.push(roleItem)
@@ -337,6 +337,7 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
          }
        for (let it of stencilItemGroups[1].items){ //活动
                if(it.index==6||it.index==7||it.index==8){
+                console.log(stencilItemGroups[1].items)
                 it.visible=true;
                }
          }
@@ -443,6 +444,14 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
 
             // Gather properties of selected item
             var properties = stencil.properties();//右边属性值
+           //  if(flag){ //只有flag为true时候才进行标记的变化
+           //        count++;
+           //        selectedShape.properties._object['oryx-overrideid']=editorManager.getModel().childShapes[editorManager.getModel().childShapes.length-1].resourceId;
+           //        flag=false;
+           //        // vae2=false
+           // }
+            console.log(selectedShape)
+
             if(!selectedShape.properties._object['oryx-overrideid']){
               selectedShape.properties._object['oryx-overrideid']=selectedShape.resourceId
             }
