@@ -11,6 +11,11 @@ import Layout from '@/layout'
 // import modelerRouter from './modules/flowable-modeler'
 
 export const constantRoutes = [
+ // {
+ //    path: '/',
+ //    component: () => import('@/views/login'),
+ //    hidden: true
+ //  },
   {
     path: '/',
     component: () => import('@/views/home/index'),
