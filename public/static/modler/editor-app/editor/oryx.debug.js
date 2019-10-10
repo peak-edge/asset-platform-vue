@@ -2302,7 +2302,7 @@ ORYX = Object.extend(ORYX, {
 			{ 
 				append: function(message) {
 					if(typeof(console) !== "undefined" && console.log !== undefined) {
-						console.log(message); 
+		
 					}
 				}
 			}

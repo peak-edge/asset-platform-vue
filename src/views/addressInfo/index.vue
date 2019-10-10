@@ -1,22 +1,11 @@
 <template>
     <el-container id="address-container">
         <el-main>
-            <!-- <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" style="padding-left:38%"> 
-                <el-menu-item index="0" @click="placestucture()">场景结构设置</el-menu-item>
-                <el-menu-item index="1" @click="placemember()" style="margin-left:10%">场景成员设置</el-menu-item>
-                <div id="buttongroup1" style="display:block">
-                    <el-button type="primary" size="mini" style="float:right;margin-top:12px">保存</el-button>
-                    <el-button type="primary" size="mini" style="float:right;margin-right:8px;margin-top:12px">同步组织机构</el-button>
-                </div>
-                <div id="buttongroup2" style="display:none">
-                    <el-button type="primary" size="mini" style="float:right;margin-top:12px">添加</el-button>
-                    <el-button type="danger" size="mini" style="float:right;margin-right:8px;margin-top:12px">批量移除</el-button>
-                </div>
-            </el-menu> -->
-            <el-card id="card1">
+            <el-card id="card1" style=" overflow-y:scroll;">
                 <div class="organ-architecture">
                     <span class="attribute">场景——{{sceneTitle}} （属性设置）:</span> 
-                    <el-button type="primary" size="mini" style="float:right;margin-top:-32px">同步组织机构</el-button>
+                    <el-button size="mini" style="float:right;margin-top:-32px;margin-right:120px" disabled>同步组织机构</el-button>
+                    <el-button type="primary" size="mini" style="float:right;margin-top:-32px" @click="initialTree()">编辑组织机构</el-button>
                     <br>
                     <el-checkbox v-model="horizontal">横向/纵向</el-checkbox>
                     <el-checkbox v-model="collapsable">折叠</el-checkbox>
@@ -99,8 +88,8 @@
             <div class="dialog-buttongroup" style="text-align:right;margin:30px 20px 0px;">
                 <el-button @click="dialogVisible = false;resetForm('newNodeForm')" size="small">取 消</el-button>
                 <!-- <el-button type="info" size="small" @click="showEdit()">编辑该节点</el-button>
-                <el-button type="primary" size="small" @click="showNewSon()">新增子节点</el-button>
-                <el-button type="danger" size="small" @click="deleteNode()">删除此节点</el-button> -->
+                <el-button type="primary" size="small" @click="showNewSon()">新增子节点</el-button>-->
+                <el-button type="danger" size="small" v-if="showDelete" @click="deleteNode()">删除此节点</el-button> 
             </div>
             <div v-if="edit" style="margin-top:30px;"> 
                 <el-divider content-position="left">编辑该节点</el-divider>
@@ -142,13 +131,39 @@
                 </el-form>
             </div>
         </el-dialog>
+
+        <!-- 编辑组织机构对话框 -->
+        <el-dialog :title="'编辑组织机构——'+sceneTitle" :visible.sync="dialogVisible2" width="1000px">
+            <!-- <span style="line-height:3;display:inline-block">{{title}}</span><br> -->
+            <tree-transfer 
+                class="treeTransfer"
+                :title="transferTitle" 
+                :from_data='fromData' 
+                :to_data='toData' 
+                :defaultProps="{label:'label'}" 
+                @addBtn='add' 
+                @removeBtn='remove' 
+                :mode='mode' 
+                height='540px' 
+                filter 
+                openAll>
+            </tree-transfer>
+            <span slot="footer" class="dialog-footer">
+                <el-button size="medium" @click="dialogVisible2 = false">取 消</el-button>
+                <el-button type="primary" size="medium" @click="toSave()" style="margin-right:20px">确 定</el-button>
+            </span>
+        </el-dialog>
     </el-container>
 </template>
 
 <script>
 import { options } from '@/icons/icon.json'
+import treeTransfer from 'el-tree-transfer' // 引入
 export default {
     name: 'organization-container',
+    components: {
+        treeTransfer
+    },
     data() {
         return{
             sceneTitle: '',
@@ -179,10 +194,11 @@ export default {
                 label: '番茄色'
             }],
             data: {},
-            horizontal: false,
+            horizontal: true,
             collapsable: true,
             expandAll: false,
             labelClassName: "bg-white",
+            showDelete: true,
             //节点增删改查对话框
             dialogVisible: false,
             gridData: [
@@ -200,6 +216,17 @@ export default {
                     value: ''
                 }],
             },
+            //编辑组织机构对话框
+            //树形穿梭框新增组织部门
+            dialogVisible2: false,
+            transferTitle: ["组织架构","该场景组织部门"],
+            mode: "transfer", // transfer穿梭框模式  addressList通讯录模式
+            hardReset: false,
+            showTransfer: false,
+            title: '',
+            fromData: [],
+            toData: [],
+            allNodes: [],
             //card2
             tableData2: [],
             multipleSelection: [],
@@ -212,7 +239,8 @@ export default {
     mounted() {
         this.$nextTick( function(){
             this.getOrganByScene(1)
-            this.getOrganMember(1)
+            // this.getOrganMember(1)
+            // this.getMainTree(1)
         })
     },
     methods: {
@@ -233,12 +261,13 @@ export default {
                 headers: Params2
             }).then( res => {
                 console.log(res)
-                if(res.data.obj.children) {
-                    this.data = res.data.obj
+                if(res.data.data.children) {
+                    this.data = res.data.data
                     this.data = JSON.parse(JSON.stringify(this.data).replace(/unitName/g, 'label'))
                     this.data = JSON.parse(JSON.stringify(this.data).replace(/parentId/g, 'pid'))
                     console.log(this.data)
                     this.initial(1)
+                    this.getMainTree()
                 }
             }).catch( error => {
                 console.log()
@@ -261,7 +290,7 @@ export default {
                 headers: Params2
             }).then( res => {
                 console.log(res)
-                if(res.data.status==200) {
+                if(res.data.code==200) {
                     this.tableData2 = res.data.obj
                     this.sceneTotal = res.data.obj.length
                 }
@@ -338,13 +367,12 @@ export default {
         onExpand(e,data) {
             if ("expand" in data) {
                 data.expand = !data.expand;
-                if (!data.expand && this.data.children) {
-                    this.collapse(this.data.children);
+                if (!data.expand && data.children) {
+                    this.collapse(data.children);
                 }
             } else {
                 this.$set(data, "expand", true);
             }
-            this.isNodeCenter = true
         },
         //点击树的某节点处(选中功能)
         onNodeClick(e, data) {
@@ -366,15 +394,19 @@ export default {
                 console.log(obj)
                 this.gridData[0] = obj
             }
+            if(this.gridData[0].childrenName == "无")
+                this.showDelete = true
+            else
+                this.showDelete = false
         },
         //折叠展开
         collapse(list) {
             var _this = this;
-            list.forEach(function(children) {
-                if (children.expand) {
-                    children.expand = false;
+            list.forEach(function(child) {
+                if (child.expand) {
+                    child.expand = false;
                 }
-                children.children && _this.collapse(children.children);
+                child.children && _this.collapse(child.children);
             });
         },
         expandChange() {
@@ -402,7 +434,7 @@ export default {
                 }
             }
         },
-        //节点增删改查对话框--------------------------------------------------------------------
+        //节点增删改查对话框----------------------------------------------------------------------------------------------------------
         //是否显示编辑 
         showEdit() {
             console.log(this.edit)
@@ -454,7 +486,7 @@ export default {
                 data: Params
             }).then( res => {
                 console.log(res.data)
-                if(res.data.status=="200") {
+                if(res.data.code==200) {
                     this.dialogVisible = false
                     this.resetForm('newNodeForm')
                     this.getOrganByScene()
@@ -469,24 +501,157 @@ export default {
         },
         //删除该节点
         deleteNode() {
-            var Params = [{
-                id: this.gridData[0].id,
-            }]
+            var Params = {
+                nodeIds: this.gridData[0].id,
+                sceneId: this.$store.state.user.loadScene.id
+            }
+            console.log(Params)
             this.$ajax({
-                url:'/dev-api/organ/nodes',
-                method: 'delete',
+                url:'/dev-api/scene/node/remove',
+                method: 'post',
                 contentType: "application/json; charset=utf-8",
-                data: Params
+                params: Params
             }).then( res => {
-                console.log(res.data)
-                if(res.data.status=="200") {
+                console.log(res)
+                if(res.data.code==200) {
                     this.dialogVisible = false
                     this.getOrganByScene()
+                    this.getMainTree()
                     this.$message.success("删除节点成功");
                 }
                 else {
                     this.$message.error(res.data.msg);
                 }
+            }).catch( error => {
+                console.log()
+            })
+        },
+
+        //编辑组织机构对话框-----------------------------------------------------------------------------------------------------------------------------
+        initialTree() {
+            this.getMainTree()
+            this.dialogVisible2=true
+        },
+        //得到主组织树
+        getMainTree() {
+            var Params = {}
+            var Params2 ={
+                Authorization: this.$store.state.user.token
+            }
+            this.$ajax({
+                url:'/dev-api/organ/mainTree',
+                method: 'get',
+                contentType: "application/json; charset=utf-8",
+                params: Params,
+                headers: Params2
+            }).then( res => {
+                console.log(res)
+                if(res.data.code==200) {
+                    this.fromData[0] = res.data.data
+                    this.fromData[0] = JSON.parse(JSON.stringify(this.fromData[0]).replace(/unitName/g, 'label'))
+                    this.fromData[0] = JSON.parse(JSON.stringify(this.fromData[0]).replace(/parentId/g, 'pid'))
+                    console.log("formData",this.fromData)
+                    console.log("data",this.data)
+                    if(Object.keys(this.data).length != 0) {
+                        this.toData[0] = this.data
+                        this.allNodes = []
+                        this.GetSubJson(this.toData, this.allNodes)
+                        console.log(this.allNodes)
+                    }
+                    else
+                        this.$message.error("加载场景失败")
+                }
+                else {
+                    this.$message.error('后台系统错误');
+                }
+            }).catch( error => {
+                console.log()
+            })
+        },
+        //得到树中所有Id值的方法
+        GetSubJson(jsonData, json) {
+            for (var i = 0; i < jsonData.length; i++) {
+                if (jsonData[i].id !='') {
+                    json.push(jsonData[i].id);
+                    if (jsonData[i].children.length!=0) {
+                        this.GetSubJson(jsonData[i].children, json);
+                    }
+                }
+            }
+        },
+        // 切换模式 现有树形穿梭框模式transfer 和通讯录模式addressList
+        changeMode() {
+            if (this.mode == "transfer") {
+                this.mode = "addressList";
+            } else {
+                this.mode = "transfer";
+            }
+        },
+        // 监听穿梭框组件添加
+        add(fromData,toData,obj){
+            // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的{keys,nodes,halfKeys,halfNodes}对象
+            // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
+            // console.log("fromData:", fromData);
+            // console.log("toData:", toData);
+            // console.log("obj:", obj);
+            for(var i=0;i<obj.keys.length;i++)
+				this.allNodes.push(obj.keys[i])
+			for(var j=0;j<obj.harfKeys.length;j++)
+                this.allNodes.push(obj.harfKeys[j])
+            console.log(this.allNodes)
+			this.allNodes = this.unique(this.allNodes)
+			console.log(this.allNodes)
+        },
+        // 监听穿梭框组件移除
+        remove(fromData,toData,obj){
+            // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的{keys,nodes,halfKeys,halfNodes}对象
+            // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
+            // console.log("fromData:", fromData);
+            // console.log("toData:", toData);
+            // console.log("obj:", obj);
+            var removeNode = []
+			for(var i=0;i<obj.keys.length;i++)
+				removeNode.push(obj.keys[i])
+            console.log(removeNode)
+            // console.log(this.allNodes)
+			this.allNodes = this.allNodes.filter(function(v){ return removeNode.indexOf(v) == -1 })
+			console.log(this.allNodes)
+        },
+        //数组去重
+		unique(arr){
+			var hash=[];
+			for (var i = 0; i < arr.length; i++) {
+				if(arr.indexOf(arr[i])==i){
+				hash.push(arr[i]);
+				}
+			}
+			return hash;
+		},
+        //保存穿梭框
+        toSave() {
+            this.dialogVisible2 = false
+            console.log(this.allNodes)
+            var Params = {
+                sceneId: this.sceneId,
+                nodeIds: this.allNodes.join(",")
+            }
+			var Params2 = {
+                Authorization: this.$store.state.user.token
+            }
+            console.log(Params)
+            this.$ajax({
+                url:'/dev-api/scene/node/add',
+                method: 'post',
+                contentType: "application/json; charset=utf-8",
+				params: Params,
+				headers: Params2
+            }).then( res => {
+                if(res.data.code==200) {
+                    this.$message.success("编辑组织部门成功")
+                    this.getOrganByScene()
+                }
+                else 
+                    this.$message.error(res.data.msg)
             }).catch( error => {
                 console.log()
             })
@@ -665,6 +830,13 @@ export default {
 }
 .bg-tomato {
     background-color: tomato;
+}
+/* 编辑组织机构 */
+#address-container .transfer-left {
+	margin-left: 20px;
+}
+#address-container .transfer-right {
+	margin-right: 20px;
 }
 </style>
 

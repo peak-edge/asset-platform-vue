@@ -138,7 +138,7 @@
 											<span>{{ group.name | translate }}</span><!--基本属性标题-->
 											<i ng-if="(group.name| translate)!='操作权限'" class="glyphicon glyphicon-chevron-right pull-right"
 												ng-class="{'glyphicon-chevron-right pull-right': !group.expanded, 'glyphicon-chevron-down pull-right': group.expanded}"></i>
-											<i ng-if="(group.name| translate)=='操作权限'" class="glyphicon glyphicon-chevron-right pull-right"
+											<i ng-if="(group.name|translate)=='操作权限'" class="glyphicon glyphicon-chevron-right pull-right"
 												ng-class="{'glyphicon-chevron-right pull-right': group.expanded, 'glyphicon-chevron-down pull-right': !group.expanded}"></i>
 										</div>
 										<div class="property-group-body" ng-class="{collapsed: (group.name| translate)=='操作权限'?group.expanded:!group.expanded}">

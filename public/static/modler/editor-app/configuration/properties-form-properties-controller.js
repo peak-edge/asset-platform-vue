@@ -30,7 +30,7 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesCtrl',
 
 angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
     ['$scope', '$q', '$translate', '$timeout', function ($scope, $q, $translate, $timeout) {
-
+    
         // Put json representing form properties on scope
         if ($scope.property.value !== undefined && $scope.property.value !== null
             && $scope.property.value.formProperties !== undefined
@@ -159,13 +159,15 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
                     id:propertyIndex++,
                     name:listObj[i].name,
                     type:'boolean',
-                    readable:true,
+              
+                    writable:3,
+           
                     key:listObj[i].key
                 }
               
                 if(listObj.length>$scope.formProperties.length) $scope.formProperties.push(newProperty);
             }
-            
+
 
             $timeout(function () {
                 $scope.gridApi.selection.toggleRowSelection(newProperty);
@@ -301,17 +303,13 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
                 }
             }
         };
-
         // Click handler for save button
         $scope.save = function () {
-
             if ($scope.formProperties.length > 0) {
                 $scope.property.value = {};
                 $scope.property.value.formProperties = $scope.formProperties;
-            } else {
-                $scope.property.value = null;
             }
-
+            
             $scope.updatePropertyInModel($scope.property);
             $scope.close();
         };

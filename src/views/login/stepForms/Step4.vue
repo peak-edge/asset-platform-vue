@@ -5,9 +5,10 @@
 				placeholder="请输入关键词"
 				prefix-icon="el-icon-search"
 				v-model="input"
-				size="small">
+				size="small"
+				disabled>
 			</el-input>
-			<el-button type="primary" size="small" @click="lookOut()">查 找</el-button>
+			<el-button type="primary" size="small" @click="lookOut()" disabled>查 找</el-button>
 		</div>
 		<div class="group-tip">
 			<span>组织架构列表： </span>
@@ -105,7 +106,7 @@ export default {
                 method: 'post',
 				contentType: "application/json; charset=utf-8",
                 auth: {
-					username: 'clientadmin',
+					username: 'asset',
 					password: '123'
 				}
             }).then( res => {
@@ -119,6 +120,8 @@ export default {
 				var Params3 = {
 					Authorization: "Bearer "+ res.data.access_token,
 				}
+				console.log(Params2)
+				console.log(Params3)
 				this.$ajax({
 					url:'/dev-api/api/rest/scenes',
 					method: 'get',
@@ -126,8 +129,9 @@ export default {
 					params: Params2,
 					headers: Params3
 				}).then( res => {
-					this.sceneTotal = res.data.obj.total
-					this.scenelist = res.data.obj.list
+					console.log(res)
+					this.sceneTotal = res.data.data.total
+					this.scenelist = res.data.data.list
 					console.log(this.scenelist)
 				}).catch( error => {
 					console.log()
@@ -167,7 +171,7 @@ export default {
             }).then( res => {
 				console.log(res)
                 if(res.data.obj) {
-                    this.fromData[0] = res.data.obj
+                    this.fromData[0] = res.data.data
                     this.fromData[0] = JSON.parse(JSON.stringify(this.fromData[0]).replace(/unitName/g, 'label'))
                     this.fromData[0] = JSON.parse(JSON.stringify(this.fromData[0]).replace(/parentId/g, 'pid'))
                     console.log(this.fromData)

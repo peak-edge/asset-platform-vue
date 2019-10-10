@@ -12,19 +12,16 @@
 			    <div class="middle1">
 			    	<div style="height:380px;display:block">
 		    			<span onclick="gplus();" class="glyphicon glyphicon-plus"></span>
-	          			<span id="gminus" class="glyphicon glyphicon-minus"></span>
 	          			<input id="forgids" name="forgids" type="hidden" ng-model="forgids"/>
 	          			<input id="forgnames" name="forgnames" type="hidden"  ng-model="forgnames"/>
 	          			<input id="liorgnames" name="liorgnames" type="hidden" />
 			        </div>
 			    </div>
 			    <div class="right1">
-			    
-                            <ul id="resultsZtree" class="ztree">
-                                    <li style='height:30px;'>名称<li>
-                                    <li style='height:30px;'>校宣传办<li>
-                                   </ul>
-			      
+			    	<ul id="resultsZtree" class="ztree">
+                        <li style='height:30px;'>名称</li>
+                    
+			       	</ul>
 			    </div>
             </div>
             <div class="modal-footer">
@@ -34,10 +31,7 @@
         </div>
     </div>
 <!-- ztree树的初始化 -->
-<script type="text/javascript">
-     
-     
-
+<script type="text/javascript">  
 	var setting = {
 		check: {
             enable: true,
@@ -52,28 +46,6 @@
 			onCheck:zTreeOnClick   
 		}
 	};
-	// var zNodes =[
- //        { id:1, pId:0, name:"浙江省财政厅", open:true},
-
- //        { id:'abc', pId:1, name:"部门A", open:true},
- //        { id:111, pId:'abc', name:"部门A1"},
- //        { id:112, pId:'abc', name:"部门A2"},
- //        { id:1111, pId:111, name:"部门A11"},
-
- //        { id:1112, pId:111, name:"部门A12"},
- //        { id:22, pId:1, name:"部门B", open:false},
- //        { id:10021001, pId:22, name:"部门B1"},
- //        { id:10021002, pId:22, name:"部门B2"},
-
- //        { id:33, pId:1, name:"部门C", open:false},
- //        { id:10031001, pId:33, name:"部门C1"},
- //        { id:10031002, pId:33, name:"部门C2"},
- //        { id:10031003, pId:33, name:"部门C3"},
-	// ];
-
-
-
-
     var list={};
     var count=0;
 
@@ -157,6 +129,8 @@
                             }
                         }
                         recurse(data, "");
+                          arr.push({id:'chenyuchen',name:'本部门',pId:0,open:true})
+                          console.log(arr)
                         return arr;
           }
 
@@ -171,7 +145,7 @@
                     "authorization":token
                  },
                 success: function(result){
-                   jQuery.fn.zTree.init(jQuery("#orgZtree"),setting,dubRemove(unflatten(result.obj)));
+                   jQuery.fn.zTree.init(jQuery("#orgZtree"),setting,dubRemove(unflatten(result.data)));
                 },
                 error:function(err){
                     console.log(err)

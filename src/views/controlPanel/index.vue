@@ -57,6 +57,7 @@
 						<el-menu-item index="/controlpanel/businessresource/flow/model"><div class="barstyle" style="margin-left:-60px"></div>流程模型</el-menu-item>
 						<el-menu-item index="/controlpanel/businessresource/flow/instance"><div class="barstyle" style="margin-left:-60px"></div>流程实例</el-menu-item>
 						<el-menu-item index="/controlpanel/businessresource/flow/monitor"><div class="barstyle" style="margin-left:-60px"></div>流程监控</el-menu-item>
+						<el-menu-item index="/controlpanel/businessresource/flow/monitor2"><div class="barstyle" style="margin-left:-60px"></div>流程监控2</el-menu-item>
 					</el-submenu>
 					<!-- <el-menu-item index="4-4"><div class="barstyle"></div>列表管理</el-menu-item> -->
 					<el-menu-item index="/controlpanel/businessresource/business_role"><div class="barstyle"></div>业务角色管理</el-menu-item>
@@ -172,9 +173,9 @@ export default {
 	height: 100vh;
 	.Title1 {
 		background:rgb(32,34,42);
-		width:219px;
+		// width:220px;
 		height:55px;
-		border-bottom: 2px rgb(6,7,8) solid;
+		border-bottom: 1.5px rgb(6,7,8) solid;
 		span {
 			display: block;
 			text-align: center;
@@ -187,9 +188,9 @@ export default {
 	}
 	.Title2 {
 		background:rgb(32,34,42);
-		width:219px;
+		// width:220px;
 		height:55px;
-		border-bottom: 2px rgb(6,7,8) solid;
+		border-bottom: 1.5px rgb(6,7,8) solid;
 		display: block;
 		text-align: center;
 		font-size: 18px;

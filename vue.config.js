@@ -48,7 +48,8 @@ module.exports = {
       //   }
       // },
       '/dev-api': {
-          target: `http://10.1.18.178:8083/`,
+          target: 'http://120.77.179.239:8083',
+          // target: `http://10.1.18.178:8083/`,
           // target: 'http://10.1.18.206:8083/',
           // target:'http://localhost:8083/',
           changeOrigin: true,
@@ -57,7 +58,8 @@ module.exports = {
           }
         },
       '/my-api': {
-        target: `http://10.1.18.178:9000/`, //源地址
+        target: `http://120.77.179.239:9000/`, //源地址
+        // target: `http://10.1.18.178:9000/`,
         // target: 'http://localhost:9000/', //源地址
         changeOrigin: true, //改变源
         pathRewrite: {
@@ -76,7 +78,8 @@ module.exports = {
       // },
       '/app': {  
         // target: 'http://localhost:9000/app', //源地址
-        target: `http://10.1.18.178:9000/app`, //源地址
+        target: `http://120.77.179.239:9000/app`, //源地址
+        // target: `http://10.1.18.178:9000/app`,
         changeOrigin: true, //改变源
         pathRewrite: {
           '^/app': '' //路径重写
@@ -84,7 +87,8 @@ module.exports = {
       },
       '/modler': {  
         // target: 'http://localhost:9000/', //源地址
-        target: `http://10.1.18.178:9000/`, //源地址
+        target: `http://120.77.179.239:9000/`, //源地址
+        // target: `http://10.1.18.178:9000/`,
         changeOrigin: true, //改变源
         pathRewrite: {
           '^/modler': '' //路径重写

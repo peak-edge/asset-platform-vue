@@ -112,7 +112,7 @@
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
                     :current-page="currentPage"
-                    :page-sizes="[8, 15, 20, 30]"
+                    :page-sizes="[10, 15, 20, 30]"
                     :page-size="pageSize"
                     layout="total, sizes, prev, pager, next, jumper"
                     :total="userTotal"
@@ -193,7 +193,7 @@ export default {
             //分页信息
             currentPage: 1,
             userTotal: 0,
-            pageSize: 8,
+            pageSize: 10,
             //增删改弹出框信息
 			dialogFormVisible: false,
 			formLabelWidth: '90px',
@@ -244,9 +244,9 @@ export default {
                 headers: Params3
             }).then( res => {
                 console.log(res.data)
-                if(res.data.status=="200") {
-                    this.tableData = res.data.obj.list
-                    this.userTotal = res.data.obj.total
+                if(res.data.code==200) {
+                    this.tableData = res.data.data.list
+                    this.userTotal = res.data.data.total
                     for(var i=0;i<this.tableData.length;i++) {
                         if(this.tableData[i].admin==1)
                             this.tableData[i].admin="组织管理员"
@@ -400,7 +400,7 @@ export default {
                 headers: Params2
             }).then( res => {
 				console.log(res)
-				if(res.data.status==200) {
+				if(res.data.code==200) {
 					this.$message.success("删除用户成功")
 					this.getAllMemberList()
 				}

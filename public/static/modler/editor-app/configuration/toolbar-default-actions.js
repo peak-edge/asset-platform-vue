@@ -11,12 +11,10 @@
  * limitations under the License.
  */
 'use strict';
-var authdata=[]
 var FLOWABLE = FLOWABLE || {};
 FLOWABLE.TOOLBAR = {
     ACTIONS: {  	
         saveModel: function (services) {
-            authdata=services.$authdata;
             _internalCreateModal({
                 backdrop: true,
                 keyboard: true,
@@ -25,7 +23,7 @@ FLOWABLE.TOOLBAR = {
             }, services.$modal, services.$scope);
         },
         
-        validate: function(services) {
+        validate: function(services){
         	_internalCreateModal({
                 backdrop: true,
                 keyboard: true,
@@ -167,6 +165,7 @@ FLOWABLE.TOOLBAR = {
         },
 
         copy: function (services) {
+
             FLOWABLE.TOOLBAR.ACTIONS._getOryxEditPlugin(services).editCopy();
             for (var i = 0; i < services.$scope.items.length; i++) {
                 var item = services.$scope.items[i];
@@ -316,7 +315,7 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
 	}
 	
     var modelMetaData = editorManager.getBaseModelData();
-
+     var modelCurrentData=editorManager.getModel()
     var description = '';
     if (modelMetaData.description) {
     	description = modelMetaData.description;
@@ -354,12 +353,30 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
            
     	});
     };
-       
+     function dubRemove(arr){ //数组去重
+                let res=[]; 
+                let repeat=[];
+                for(let i=0;i<arr.length;i++){
+                    let formItemKey=arr[i].act_id+arr[i].form_item_key;
+                    if(!repeat[formItemKey]){
+                        res.push(arr[i]);
+                        repeat[formItemKey]=1
+                    }else{
+                      for(let k=0;k<i;k++){
+                        if((arr[k].act_id+arr[k].form_item_key)==formItemKey){
+                            res.splice(arr[k],1);//删除数组中某一项
+                        }
+                      }
+                       res.push(arr[i]);
+                       repeat[formItemKey]=1
+                    }
+                }
+                return res;
+        }
     $scope.save = function (successCallback){ //保存
-        console.log(authdata)
+
         if (!$scope.saveDialog.name || $scope.saveDialog.name.length == 0 ||
         	!$scope.saveDialog.key || $scope.saveDialog.key.length == 0) {
-        	
             return;
         }
 
@@ -417,29 +434,72 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
                 var temp=0;
                 var max=0;
                 var isJoin=0;
-                var roles,users,groups;
+                var roles,users,groups,usersid;
+                var INTATOR='';
+                var CUR_SECTION=''
+                var startPerson=''
+                var startBus=''
+                var orgsArr=[];
+                var usersArr=[];
                 for(var i=0;i<needDate.childShapes.length;i++){
                     var property=needDate.childShapes[i].properties;
-                    temp=property.overrideid.substring(1)
-                    if(temp>max){
-                         max=temp;
-                    }
-                   
-                    if(property.roles){
-                        roles=property.roles.usernames.split(",").join('|');
+                   if(property.documentation==1||property.documentation==2||property.documentation==3){
+                 
+                    if(property.roles){                   
+                        roles=property.roles.userids.split(",").join('|');
                     }
                     if(property.users){
-                        users=property.users.usernames.split(",").join('|');
+                        if(property.users.usernames.search('发起人')){
+                            INTATOR='INTATOR'
+                        }
+                        if(property.users.usernames.search('所属部门')){
+                            CUR_SECTION='CUR_SECTION'
+                        }
+                         if(INTATOR){
+                            startPerson='INTATOR'
+                        }else{
+                            startPerson=''
+                        }
+
+
+                         if(CUR_SECTION){
+                            startBus='CUR_SECTION'
+                        }else{
+                             startBus=''
+                        }
+                        property.users.userids=property.users.userids.replace(/,INTATOR/g,'');
+                        property.users.userids=property.users.userids.replace(/,CUR_SECTION/g,'');
+                        users=property.users.usernames.split(",")
+                        usersid=property.users.userids.split(",")
+                
+                                // for(var k=0;k<users.length;k++){
+                                //     if(usersid[k]){
+                                //         if(usersid[k].search('@人员')!=-1){ //字符串中是否含有子字符串
+                                //             usersid[k]=usersid[k].replace(/@人员/g,'');
+                                //             usersArr.push(usersid[k])
+                                //         }else{
+                                //             orgsArr.push(usersid[k])
+                                //         }
+                                //     }
+                                    
+                                // }
+                                // usersArr=usersArr.join('|');
+                                // orgsArr=orgsArr.join('|');
+                                // console.log(users,usersArr,orgsArr)
+                      
                     }
                     if(property.orgs){
-                          groups=property.orgs.orgnames.split(",").join('|');
+                     
+                        //groups=property.orgs.orgids.replace(/chenyuchen/g, "CANDIDATE_GROUP_CUR_SECTION").split(",").join('|')
                     }
-                    
+
                     if(property.multiinstance_condition){
                         isJoin=2
                     }else{
                         isJoin=0;
                     }
+   
+     
                      var item={
                         'act_id':property.overrideid,
                         'act_type':property.documentation,
@@ -459,21 +519,25 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
                                     }
                           },
                         "limit_time": property.duedatedefinition,
-                        "candidate_user": users,
-                        "candidate_group": groups,
+                        "candidate_user":usersArr?(usersArr+startPerson):(usersArr+'|'+startPerson),
+                        "candidate_group": orgsArr?(orgsArr+startBus):(orgsArr+'|'+startBus),
                         "overtime_strategy": 1,
-                        "todo_strategy": " ",
+                        "todo_strategy":" ",
                         "if_joint_sign":isJoin
                          }
+                         console.log("人员="+item.candidate_user)
+                         console.log("部门="+item.candidate_group)
                      list.push(item);
                      roles='';
                      users='';
                      groups=''
-
                 }
-                  jsondata.proc_node_data=list;
-             console.log(list)
+               }  
 
+
+
+
+              jsondata.proc_node_data=list;
              jQuery.ajax({ 
                 type: "POST",
                 contentType:"application/json;charset=utf-8",
@@ -481,39 +545,7 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
                 data:JSON.stringify(jsondata),
                 dataType:'json',
                 success: function(result){
-                   if(result.status==200){
-                     
-                if(flag66==0){
-                          jQuery.ajax({ 
-                            type: "POST",
-                            contentType:"application/json;charset=utf-8",
-                            url: `/modler/proc_model/proc_node_num?proc_model_id=${needDate.modelId}&proc_node_num=${max}`,
-                            dataType:'json',
-                            success:function(result){  
-                               flag66=1;
-                               console.log('第一次保存count='+max)
-              
-                            },
-                            error:function(err){
-                                console.log(err)                   
-                            }
-                        });
-                }else{
-                    jQuery.ajax({
-                        type:'PUT',
-                        url:`/modler/proc_model/proc_node_num?proc_model_id=${needDate.modelId}`,
-                        data:{'proc_node_num':max},
-                        dataType: "html",
-                        success:function(res){
-                            console.log('其他几次保存')
-                        },
-                        error:function(res){
-                            console.log(res)
-                        }
-                    })
-                }
-                    //localStorage.setItem('idcount',{'count':max,'modelId':needDate.modelId})
-                   }
+                    console.log(result)
                   
                 },
                 error:function(err){
@@ -521,25 +553,138 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
                     
                 }
             });
-             //操作权限的接口
-             var jsondata2={
-                "proc_model_id":needDate.modelId,
-                "data":authdata,
-                "print":1
-             }
+
+
+
+
+            
+                //var nodes=modelMetaData.model.childShapes;
+                var nodes=modelCurrentData.childShapes
+                console.log(nodes);
+    
+                var objs={};
+              // function add(name,value){ //合并对象
+                   
+              //       objs[name] = value;//返回参数
+
+              //   }
+                for(var i=0;i<nodes.length;i++){
+                    if(nodes[i].stencil.id=='SequenceFlow'){
+                          if(nodes[i].properties.conditionsequenceflow.formProperties){
+                             if(!isNaN(nodes[i].properties.conditionsequenceflow.formProperties[0].variable)){
+                                 objs[nodes[i].resourceId]= "{"+nodes[i].properties.conditionsequenceflow.formProperties[0].key+" "+nodes[i].properties.conditionsequenceflow.formProperties[0].type+" "+nodes[i].properties.conditionsequenceflow.formProperties[0].variable+"}"
+
+                             }else{
+                                objs[nodes[i].resourceId]= "{"+nodes[i].properties.conditionsequenceflow.formProperties[0].key+" "+nodes[i].properties.conditionsequenceflow.formProperties[0].type+" "+"'"+nodes[i].properties.conditionsequenceflow.formProperties[0].variable+"'"+"}"
+
+                             }
+                             if(nodes[i].properties.conditionsequenceflow.formProperties[0].type=='=='){
+                                    objs[nodes[i].resourceId]= "{"+nodes[i].properties.conditionsequenceflow.formProperties[0].key+" "+"eq"+" "+"'"+nodes[i].properties.conditionsequenceflow.formProperties[0].variable+"'"+"}"
+
+                             }
+                             if(nodes[i].properties.conditionsequenceflow.formProperties[0].type=='!='){
+                                    objs[nodes[i].resourceId]= "{"+nodes[i].properties.conditionsequenceflow.formProperties[0].key+" "+"ne"+" "+"'"+nodes[i].properties.conditionsequenceflow.formProperties[0].variable+"'"+"}"
+
+                             }
+                       // add(arrcon[i].resourceId,"${"+arrcon[i].properties.conditionsequenceflow.formProperties[0].key+" "+arrcon[i].properties.conditionsequenceflow.formProperties[0].type+" "+"'"+arrcon[i].properties.conditionsequenceflow.formProperties[0].variable+"'"+"}")
+                }
+            }
+        }
+              console.log(objs)
+               var conData={
+                'proc_model_id':needDate.modelId,
+                'seq_condition':JSON.stringify(objs)
+               }
                 jQuery.ajax({
-                        type:'POST',
-                        contentType:"application/json;charset=utf-8",
-                        url:`/modler/proc_model/authority`,
-                        data:JSON.stringify(jsondata2),
-                        dataType: 'json',
-                        success:function(res){
-                            console.log('操作权限保存成功')
-                        },
-                        error:function(res){
-                            console.log(res)
+                    type:'POST',
+                    contentType:"application/json;charset=utf-8",
+                    url:`/modler/proc_model/seq_condition`,
+                    dataType:'json',
+                    data:JSON.stringify(conData),
+                    success:function(ret){
+                        console.log(ret)
+                    },
+                    error:function(err){
+                        console.log(err)
+                    }
+                })
+
+                var arr3=[];
+                var formprop=[];
+                var arr4=[];
+                jQuery.ajax({ //获得节点操作权限的KEY值
+                      type:'GET',
+                      url:`/modler/proc_model/bind_form_model?proc_model_id=${needDate.modelId}`,
+                      success:function(rets){
+                          var ret=JSON.parse(rets.obj)
+                      
+                          for(var i=0;i<ret.list.length;i++){
+                                  var listItem={
+                                  key:ret.list[i].key,
+                                  name:ret.list[i].name
+                              }
+                            arr4.push(listItem);
+                          }
+                          for(var k=0;k<nodes.length;k++){
+
+                              if(nodes[k].properties.documentation==1||nodes[k].properties.documentation==2||nodes[k].properties.documentation==3){
+                                    var auth=3
+                                   formprop=nodes[k].properties.formproperties.formProperties;
+                                    if(formprop){
+                                       
+                                        for(var i=0;i<formprop.length;i++){
+                                                  if(formprop[i].writable==1){
+                                                      auth=1;
+                                                  }
+                                                   if(formprop[i].writable==2){
+                                                      auth=2;
+                                                  }
+                                                  if(formprop[i].writable==3){
+                                                      auth=3;
+                                                  }
+                                                  if(formprop[i].writable==4){
+                                                      auth=4;
+                                                  }
+                                              var singleItem={'act_id':nodes[k].properties.overrideid,"form_item_key":formprop[i].key,"authority":auth}
+                                                       arr3.push(singleItem)
+                                              }
+                                    } 
+
+                                    if(!formprop){
+                                        for(var s=0;s<arr4.length;s++){
+                                            var singleItem={'act_id':nodes[k].properties.overrideid,"form_item_key":arr4[s].key,"authority":3}
+                                                       arr3.push(singleItem)
+                                        }
+                                      }
+                                   }
+                                }
+                                       console.log(dubRemove(arr3))                   //操作权限的接口
+                                     var jsondata2={
+                                        "proc_model_id":needDate.modelId,
+                                        "data":dubRemove(arr3),
+                                        "print":1
+                                     }
+                            
+                                jQuery.ajax({
+                                        type:'POST',
+                                        contentType:"application/json;charset=utf-8",
+                                        url:`/modler/proc_model/authority`,
+                                        data:JSON.stringify(jsondata2),
+                                        dataType: 'json',
+                                        success:function(res){
+                                            console.log('操作权限保存成功')
+                                        },
+                                        error:function(res){
+                                            console.log(res)
+                                        }
+                                    })
+                          }
                         }
-                    })
+                      )
+
+
+               
+
                 editorManager.handleEvents({
                     type: ORYX.CONFIG.EVENT_SAVED
                 });
@@ -632,11 +777,9 @@ angular.module('flowableModeler').controller('ValidateModelCtrl',['$scope', '$ht
         $scope.status = {
             loading: true
         };
-
         $scope.model = {
         	errors: []
-        };
-        
+        };       
         $scope.errorGrid = {
             data: $scope.model.errors,
             headerRowHeight: 28,
@@ -669,11 +812,10 @@ angular.module('flowableModeler').controller('ValidateModelCtrl',['$scope', '$ht
             url: FLOWABLE.URL.validateModel(),
             method: 'POST',
             cache: false,
-            headers: {
+            headers:{
                 "Content-Type":"application/json;charset=utf-8"
             },
-            data: model
-            
+            data: model      
         }).then(function(response){
         	$scope.status.loading = false;
             response.data.forEach(function (row) {

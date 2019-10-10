@@ -13,7 +13,7 @@ import Layout from '@/layout'
 export const constantRoutes = [
   {
     path: '/',
-    component: () => import('@/views/login/index'),
+    component: () => import('@/views/home/index'),
     hidden: true
   },
   {
@@ -79,6 +79,12 @@ export const constantRoutes = [
         name: 'flow_monitor',
         component: () => import('@/views/controlPanel/content/businessResource/flow/flow_monitor'),
         meta: { title: '业务资源管理-流程管理-流程监控', icon: 'table'}
+      },
+      {
+        path: 'businessresource/flow/monitor2',
+        name: 'flow_monitor2',
+        component: () => import('@/views/controlPanel/content/businessResource/flow/flow_monitor2'),
+        meta: { title: '业务资源管理-流程管理-流程监控2', icon: 'table'}
       },
       {
         path: 'businessresource/business_role',

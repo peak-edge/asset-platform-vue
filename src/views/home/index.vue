@@ -1,7 +1,9 @@
 <template>
     <el-container class="home-container">
+
         <el-header>
             <img class="logo" src="https://cn.vuejs.org/images/logo.png">
+            <span style='display:inline-block;font-size:20px;float:left;font-weight:540;margin-top:5px;color:rgb(0,33,64)'>资产云</span>
             <el-input
                 placeholder="请输入内容"
                 prefix-icon="el-icon-search"
@@ -37,52 +39,36 @@
             <!-- <span type="text" style="float:right;padding-right:30px;padding-top:5px">控制台</span> -->
         </el-header>
         <el-header style="box-shadow: 0 1.5px 8px 0 #e0e5f0;background:white">
-            <el-button class="button1" shadow="hover"  @click="dialogVisible = true">
-                <svg-icon icon-class="icon-add" style="font-size:28px;"/> &nbsp;新建应用
-
-            </el-button>
-            <el-button class="button2" shadow="hover" v-for="(item,index) in applist" :key="index" @click="toAppInfomation(item.id,item.iconCls,item.applicationName,item.path)"> 
-                <svg-icon :icon-class="item.iconCls" style="font-size:28px;"/> &nbsp;{{item.applicationName}}
-            </el-button>
-            <!-- 对话框 -->
-            <el-dialog
-                title="新建应用"
-                :visible.sync="dialogVisible"
-                width="520px"
-                center>
-                <el-form>
-                    <el-form-item label="应用名称：">
-                        <el-input placeholder="请输入应用名称" v-model="appname" clearable></el-input>
-                        <!-- <el-input v-model="newappname" placeholder="请输入应用名称" clearable></el-input> -->
-                    </el-form-item>
-                    <el-form-item label="应用图标：">
-                        <el-select placeholder="请选择应用图标" v-model="value">
-                            <el-card>
-                                <!-- 待完善 -->
-                                <el-pagination small layout="prev, pager, next" :total="50"> </el-pagination>
-                                <el-option style="width:50px;float:left;border: 1px solid #e6edfd" 
-                                    v-for="item in options" 
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value"> 
-                                    <svg-icon style="font-size:24px;" :icon-class="item.value" />
-                                </el-option>
-                            </el-card>
-                        </el-select>
-                    </el-form-item>
-                </el-form>
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="dialogVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="newApp()">确 定</el-button>
-                </span>
-            </el-dialog>
+            <el-row>
+                <el-col :span="22">
+                    <el-button class="button1" shadow="hover"  @click="dialogVisible=true">
+                        <svg-icon icon-class="icon-add" style="font-size:28px;"/> &nbsp;新建应用
+                    </el-button>
+                  <!--   <el-button class="button2" shadow="hover" v-for="(item,index) in applist" :key="index" @click="toAppInfomation(item.id,item.iconCls,item.applicationName,item.path)"> 
+                        <svg-icon :icon-class="item.iconCls" style="font-size:23px;"/> &nbsp;{{item.applicationName}}
+                    </el-button> -->
+                </el-col>
+                <el-col :span="2">
+                    <el-dropdown trigger="click" style="margin-top:5px;">
+                        <span class="el-dropdown-link" style="cursor:pointer;color:#409EFF;">
+                            显示全部应用
+                            <i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item v-for="(item,index) in applist" :key="index" @click.native="toAppInfomation(item.id,item.iconCls,item.applicationName,item.path)">
+                                <svg-icon :icon-class="item.iconCls" style="font-size:23px;"/> &nbsp;{{item.applicationName}}
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </el-col>
+            </el-row>
         </el-header>
         <el-main>
             <el-row :gutter="20">
                 <el-col :span="15">
                 <div class="grid-content bg-purple">
                     <div class="shared-head">
-                        <span class="head__title"> 我的流程</span>
+                        <span class="head__title">我的流程</span>
                         <div class="message__more">全部</div>
                     </div>
                     <ul class="work-list__content">
@@ -125,6 +111,8 @@
             title="请选择你所要管理的场景:"
             :visible.sync="centerDialogVisible"
             width="50%"
+            :show-close="false"
+            :close-on-click-modal="false"
             center>
             <el-row style="margin-bottom:10px">
                 <el-col :span="6">
@@ -137,15 +125,16 @@
             
             <el-row :gutter="20">
                 <el-col :span="6" v-for="(item,index) in scenesByUser" :key="index" :index="String(index)">
-                    <el-card style="height:140px;margin-bottom:10px">
-                        <el-radio v-model="radio" :label="index">{{item.sceneName}}</el-radio>
+                    <el-card style="min-height:140px;margin-bottom:10px">
+                        <el-radio v-model="radio" :label="index">{{item.sceneName}}
                         <div style="margin-top:20px;">
-                            <el-tooltip class="item" effect="dark" :content="item.id" placement="bottom">
-                                <viewer :images="images">
+                            <el-tooltip  class="item" effect="dark" :content="item.sceneName" placement="bottom">
+                        <!--         <viewer :images="images"> -->
                                     <img :src="imgUrl" alt="场景图片" style="width:100%;height:100%"/>
-                                </viewer>
+                               <!--  </viewer> -->
                             </el-tooltip>
                         </div>
+                        </el-radio>
                     </el-card>
                 </el-col>
             </el-row>
@@ -181,13 +170,13 @@
             </el-row>
             <el-row :gutter="12">
                 <el-col :span="4" v-for="(item,index) in otherScenes" :key="index" :index="String(index)">
-                    <el-card style="height:140px;margin-bottom:10px">
+                    <el-card style="min-height:140px;margin-bottom:10px">
                         <el-radio v-model="checkedradio" :label="item">{{item.sceneName}}</el-radio>
                         <div style="margin-top:20px;">
                             <el-tooltip class="item" effect="dark" :content="item.id" placement="bottom">
-                                <viewer :images="images">
+                                <!-- <viewer :images="images"> -->
                                     <img :src="imgUrl" alt="场景图片" style="width:100%;height:100%"/>
-                                </viewer>
+                             <!--    </viewer> -->
                             </el-tooltip>
                         </div>
                     </el-card>
@@ -206,6 +195,40 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="checkedradio='';centerDialogVisible1=false">取 消</el-button>
                 <el-button type="primary" @click="toSubmit()">确 定</el-button>
+            </span>
+        </el-dialog>
+
+        <!-- 新建应用对话框 -->
+        <el-dialog
+            title="新建应用"
+            :visible.sync="dialogVisible"
+            :close-on-click-modal="false"
+            width="520px"
+            class="newAppDialog"
+            center>
+            <el-form>
+                <el-form-item label="应用名称：">
+                    <el-input placeholder="请输入应用名称" v-model="appname" clearable></el-input>
+                </el-form-item>
+                <el-form-item label="应用图标：">
+                    <el-select placeholder="请选择应用图标" v-model="value">
+                        <el-card>
+                            <!-- 待完善 -->
+                            <!-- <el-pagination small layout="prev, pager, next" :total="50"> </el-pagination> -->
+                            <el-option style="width:50px;float:left;border: 1px solid #e6edfd" 
+                                v-for="item in options" 
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"> 
+                                <svg-icon style="font-size:24px;" :icon-class="item.value" />
+                            </el-option>
+                        </el-card>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible=false;appname='';value=''">取 消</el-button>
+                <el-button type="primary" @click="newApp()">确 定</el-button>
             </span>
         </el-dialog>
     </el-container>
@@ -255,14 +278,17 @@ export default {
             currentPage:1,
 			pageSize: 12,
             sceneTotal: 0,
+            //判断是否从登录界面跳转过来的标记符
+            k: false,
+            //新建应用对话框
+            ybyapplist: [],
         }
     },
     mounted () {
         this.$nextTick( function(){
-            this.checkScene(1)
-            this.getSceneByUser(1)//获取用户对应的场景
-            this.getAppList(1)
-            this.myFlowList(1)
+            this.handleLogin()
+        
+
             // this.getAllMenus(1)
         })
     },
@@ -276,29 +302,20 @@ export default {
        console.log(from)
        next(vm => {
             if(from.path=="/") {
-                vm.centerDialogVisible = true;
+                // vm.centerDialogVisible = true;
+                vm.k=true
             }
        })
     },
     methods: {
-        // hello() {
-        //     if(this.radio!=''&&this.centerDialogVisible==true)
-        //     return true
-        //     else
-        //     return false
-        // },
         //判断是否已经选择了场景
         checkScene() {         
             console.log(this.$store.state.user.token)
             console.log(this.$store.state.user.accountName)
             console.log(this.$store.state.user.userId)
             console.log(this.$store.state.user.loadScene.id)
-            // console.log(this.GLOBAL.username)
-            // console.log(this.GLOBAL.choosescene)
-            // if(this.GLOBAL.choosescene) {
-            //     console.log(this.GLOBAL.choosescene)
-            //     this.centerDialogVisible = false
-            // }
+            if(this.k==true&&!this.$store.state.user.loadScene.id)
+                this.centerDialogVisible = true
         },
         //通过用户ID获取用户对应的场景-----------------------------------------------------------------------------------------------------------
         getSceneByUser() {
@@ -319,9 +336,9 @@ export default {
                 headers: Params2
             }).then( res => {
                 console.log(res)
-                if(res.data.status==200) {
-                    this.sceneTotal2 = res.data.obj.total
-                    this.scenesByUser = res.data.obj.list
+                if(res.data.code==200) {
+                    this.sceneTotal2 = res.data.data.total
+                    this.scenesByUser = res.data.data.list
                 }
                 else
                     this.$message.error(res.data.msg)
@@ -339,6 +356,58 @@ export default {
             console.log(`当前页: ${val}`);
             this.currentPage2 = val
             this.getSceneByUser()
+        },
+        handleLogin() {
+
+                    var Params = {
+                        accountName: 'chenxu',
+                        pwd: '123'
+                    }
+        
+                    this.$ajax({
+                        url:'/dev-api/login',
+                        method: 'post',
+                        contentType: "application/json; charset=utf-8",
+                        data: Params
+                    }).then( res => {
+                        if(res.data.code == 200) {
+                            console.log("1")
+                            this.$store.state.user.token = res.data.data.Authorization
+                            console.log("2")
+
+                            this.$store.state.user.accountName = res.data.data.accountName
+                            console.log("3")
+
+                            this.$store.state.user.userId = res.data.data.userId
+                            console.log("4")
+
+                            this.$store.state.user.realName = res.data.data.realName
+                            console.log("5")
+
+                            this.$store.state.user.loadScene = []
+                            console.log("6")
+
+                            // console.log(this.$store.state.user.token)
+                            //判断平台管理员和终端用户
+                            // if(res.data.data.admin==1)
+                            //     this.$router.push({path: '/adminhome'})
+                            // else{
+                            //     this.$router.push({path: '/home', query:{fromLogin:'true'}})
+                            // }
+                                this.checkScene()
+                                this.getSceneByUser()//获取用户对应的场景
+                                this.getAppList()
+                                this.myFlowList()
+                        }
+                        else {
+                            this.$message.error(res.data.msg);
+                        }
+                    }).catch( error => {
+                        this.loading = false
+                    })
+           
+            
+
         },
         //为用户装载工作场景
         toLoadScene() {
@@ -360,7 +429,7 @@ export default {
                 headers: Params2
             }).then( res => {
                 console.log(res)
-                if(res.data.status==200) {
+                if(res.data.code==200) {
                     this.$store.state.user.loadScene = this.scenesByUser[this.radio]
                     this.$message.success("装载工作场景" + this.scenesByUser[this.radio].sceneName + "成功")
                     this.centerDialogVisible = false
@@ -424,9 +493,9 @@ export default {
                 headers: Params2
             }).then( res => {
                 console.log(res)
-                if(res.data.status==200) {
-                    this.sceneTotal = res.data.obj.total
-                    this.otherScenes = res.data.obj.list
+                if(res.data.code==200) {
+                    this.sceneTotal = res.data.data.total
+                    this.otherScenes = res.data.data.list
                 }
                 else
                     this.$message.error(res.data.msg)
@@ -465,7 +534,7 @@ export default {
                 headers: Params2
             }).then( res => {
                 console.log(res)
-                if(res.data.status==200) {
+                if(res.data.code==200) {
                     this.$message.success("改用户绑定场景："+this.checkedradio.sceneName+"成功")
 
                     //此处默认审核通过。后期需要修改
@@ -485,7 +554,7 @@ export default {
                         headers: Params4
                     }).then( res2 => {
                         console.log(res2)
-                        if(res2.data.status==200) {
+                        if(res2.data.code==200) {
                             this.$message.success("该场景审核通过")
                             this.getSceneByUser()
                         }
@@ -543,19 +612,19 @@ export default {
                 headers: Params2
             }).then( res => {
                 this.applist=[]
-                console.log(res)
-                for(let i=0;i<res.data.obj.length;i++)
+                console.log("res="+res)
+                for(let i=0;i<res.data.data.length;i++)
                 {
                     let obj = {}
-                    obj.id = res.data.obj[i].id
-                    obj.applicationName = res.data.obj[i].name
-                    obj.iconCls = res.data.obj[i].iconCls
-                    obj.path = res.data.obj[i].path
+                    obj.id = res.data.data[i].id
+                    obj.applicationName = res.data.data[i].name
+                    obj.iconCls = res.data.data[i].iconCls
+                    obj.path = res.data.data[i].path
                     this.applist.push(obj)
                 }
-                console.log(this.applist)
+                console.log(666)
             }).catch( error => {
-                console.log()
+                console.log(777)
             })
         },
         //得到我的流程的数据
@@ -572,38 +641,107 @@ export default {
                 contentType: "application/json; charset=utf-8",
                 params: Params
             }).then( res => {
-                console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
-                console.log(res.data.obj)
-                this.myflowlist = res.data.obj
+                console.log(res)
+                if(res.data.code==200) {
+                    console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
+                    this.myflowlist = res.data.obj
+                }
+                else
+                    this.$message.error(res.data.msg)
+                // console.log()
             }).catch( error => {
                 console.log()
             })
         },
-        //新建应用
+        //新建应用对话框-------------------------------------------------------------------------------------------------------------------
         newApp() {
-            console.log(this.appname)
-            console.log(this.value)
+            this.dialogVisible = false;
             var Params = {
                 applicationName: this.appname,
-                iconCls: this.value,
+                iconCls: this.value
             }
             console.log(Params)
             this.$ajax({
-                // url: '/dev-api/application/addApp',
-                url: '/dev-api/menu/app/add',
+                url:'/my-api/application/addApp',
                 method: 'post',
                 contentType: "application/json; charset=utf-8",
                 data: Params
             }).then( res => {
                 console.log(res)
-                this.reload();
-                this.$message({
-                    type: 'success',
-                    message: '新建应用成功'
-                });
+                if(res.data.code==200) {
+                    this.$message.success("新建应用成功")
+                    var Params = {}
+                    this.$ajax({
+                        url:'/my-api/application/appList',
+                        method: 'get',
+                        contentType: "application/json; charset=utf-8",
+                        params: Params
+                    }).then( res => {
+                        console.log(res)
+                        this.ybyapplist=[]
+                        for(let i=0;i<res.data.length;i++)
+                        {
+                            let obj = {}
+                            obj.id = res.data[i].id
+                            obj.applicationName = res.data[i].applicationName
+                            obj.iconCls = res.data[i].iconCls
+                            obj.path = res.data[i].path
+                            this.ybyapplist.push(obj)
+                        }
+                        console.log(this.ybyapplist)
+                        this.newAppSetting()
+                        this.reload()
+                    }).catch( error => {
+                        console.log()
+                    })
+                }
+                else
+                    this.$message.error(res.data.msg)
             }).catch( error => {
+                this.$message.error("新建任务失败")
                 console.log()
             })
+        },
+        //2.确定数据存储成功后调用 （将这个表单加在权限里）
+        newAppSetting() {
+            console.log(this.ybyapplist)
+            for(let i=0;i<this.ybyapplist.length;i++)
+            {
+                if(this.ybyapplist[i].applicationName == this.appname && this.ybyapplist[i].iconCls == this.value)
+                    this.appid = this.ybyapplist[i].id
+            }
+            var Params = {
+                applicationName: this.appname,
+                iconCls: this.value,
+                id: this.appid,
+            }
+            var Params1 = {
+                sceneId: this.$store.state.user.loadScene.id
+            }
+            var Params2 = {
+                Authorization: this.$store.state.user.token,
+            }
+
+            this.$ajax({
+                url:'/dev-api/resource/app/add',
+                method: 'post',
+                contentType: "application/json; charset=utf-8",
+                data: Params,
+                params: Params1,
+                headers: Params2
+            }).then( res => {
+                console.log(res)
+                if(res.data.code==200) {
+                    this.$message.success("表单加在权限中成功")
+                    this.getAppList()
+                }
+                else
+                    this.$message.error(res.data.msg)
+            }).catch( error => {
+                this.$message.error("表单加在权限中失败")
+                console.log()
+            })
+            this.reload();
         },
         toMyWork() {
 
@@ -668,7 +806,7 @@ export default {
     padding: 6px;
 }
 .el-select-dropdown__item {
-    padding: 2px 14px;
+    padding: 2px 12px;
     margin: 2px;
 }
 </style>
@@ -684,6 +822,8 @@ export default {
     }
     .el-header {
         background: linear-gradient(180deg,#f9fafd,#e7eef8);
+        position: relative; 
+        z-index: 1;
         img {
             float: left;
             height: 30px;
@@ -758,7 +898,7 @@ export default {
         .button1{
             margin-left:80px;
             margin-top:5px;
-            width:140px;
+            width:130px;
             height:50px;
             border: white;
             font-size:15px;
@@ -771,12 +911,14 @@ export default {
         .button2{
             margin-left:0px;
             margin-top:5px;
-            width:140px;
+            min-width:110px;
             height:50px;
             border: white;
             font-size:15px;
             line-height: 30px;
             border-radius:10px;
+            padding-left:13px;
+            padding-right:13px;
         }
         .button2:hover {
             background: rgba(250, 250, 250, 0.9);
@@ -785,45 +927,7 @@ export default {
             font-size:30px;
             float:left;
         }
-        .el-dialog {
-            .el-form-item {
-                margin-left:35px;
-            }
-            .el-input {
-                margin-left:0px;
-                width:300px;;
-            }
-            .el-select {
-                width:300px;
-                .el-option {
-                    width:20%;
-                    margin:10px;
-                    .svg-icon{
-                        size:70px;
-                    }
-                }
-            }
-            // .icons-select {
-            //     .fip-box {
-            //         display: inline-block;
-            //         margin: 2px;
-            //         width: 60px;
-            //         line-height: 42px;
-            //         text-align: center;
-            //         cursor: pointer;
-            //         vertical-align: top;
-            //         height: 40px;
-            //         border: 1px solid #efefef;
-            //     }
-            //     span .current-icon:hover {
-            //         background-color: #2d7fff;
-            //         color: #fff;
-            //         border: 1px solid #298cba;
-            //     }
-            // }
-        }
     }
-
     .el-main {
         // color: white;
         text-align: center;
@@ -831,178 +935,192 @@ export default {
         display: grid;
         padding: 30px 100px;
         background-color: #f3f5f8;
-
-    .el-row {
-        // padding-bottom: 10px;
-        &:first-child {
-            height: 350px;
-        }
-        .shared-head {
-            padding: 0 16px 0 20px;
-            height: 56px;
-            border-bottom: 1px solid rgba(235, 237, 245, 0.9);
-            width: 100%;
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-align: center;
-            -ms-flex-align: center;
-            align-items: center;
-        .head__title {
-            font-size: 16px;
-            padding: 10px 12px;
-            position: relative;
-            color: #304265;
-        }
-        .head__title:before {
-            content: " ";
-            width: 4px;
-            height: 16px;
-            background: -webkit-gradient(
-                linear,
-                left top,
-                left bottom,
-                from(#25b6ff),
-                to(#107fff)
-            );
-            background: linear-gradient(180deg, #25b6ff, #107fff);
-            border-radius: 3px;
-            position: absolute;
-            left: 0;
-            top: 13px;
+        position: relative; 
+        z-index: 1;
+        .el-row {
+            // padding-bottom: 10px;
+            &:first-child {
+                height: 350px;
             }
-        }
-        .message__more {
-            margin-left: auto;
-            font-size: 14px;
-            color: #8893a7;
-            cursor: pointer;
-            -webkit-transition: color 0.2s;
-            transition: color 0.2s;
-        }
-        .work-list__content {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-pack: justify;
-            -ms-flex-pack: justify;
-            justify-content: space-between;
-            padding: 33px 36px;
-            height: calc(100% - 56px);
-            min-height: 238px;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            list-style: none;
-            margin: 0;
-            // padding: 0;
-            padding: 10px 40px;
-            .to_do_list {
-                // border: 1px solid;
+            .shared-head {
+                padding: 0 16px 0 20px;
+                height: 56px;
+                border-bottom: 1px solid rgba(235, 237, 245, 0.9);
+                width: 100%;
                 display: -webkit-box;
                 display: -ms-flexbox;
                 display: flex;
-                -webkit-box-orient: vertical;
-                -webkit-box-direction: normal;
-                -ms-flex-direction: column;
-                flex-direction: column;
                 -webkit-box-align: center;
                 -ms-flex-align: center;
                 align-items: center;
-                -webkit-box-pack: center;
-                -ms-flex-pack: center;
-                justify-content: center;
-                width: 28%;
-                border-radius: 6px;
-                background-color: #fff;
-                cursor: pointer;
-                -webkit-transition: all 0.2s ease;
-                transition: all 0.2s ease;
-
-
-                &:hover {
-                    background-color: #f7fafc;
-                    .todo__title {
-                    background: #fff;
-                    color: #107fff;
-                    -webkit-box-shadow: 0 0 8px 0 #e6edfd;
-                    box-shadow: 0 0 8px 0 #e6edfd;
-                }
-            }
-            .todo__title {
-                display: -webkit-box;
-                display: -ms-flexbox;
-                display: flex;
-                -webkit-box-pack: center;
-                -ms-flex-pack: center;
-                justify-content: center;
-                -webkit-box-align: center;
-                -ms-flex-align: center;
-                align-items: center;
-                width: 65%;
-                min-width: 74px;
-                max-width: 150px;
-                height: 32px;
-                margin: 0 0 18px 0;
+            .head__title {
                 font-size: 16px;
-                border-radius: 16px;
-                background: #f7fafc;
-                -webkit-box-shadow: 0 0 0 0 #e6edfd;
-                box-shadow: 0 0 0 0 #e6edfd;
-                color: #8893a7;
-                -webkit-transition: all 0.2s ease 0.05s;
-                transition: all 0.2s ease 0.05s;
+                padding: 10px 12px;
+                position: relative;
+                color: #304265;
             }
-            .todo__count {
+            .head__title:before {
+                content: " ";
+                width: 4px;
+                height: 16px;
+                background: -webkit-gradient(
+                    linear,
+                    left top,
+                    left bottom,
+                    from(#25b6ff),
+                    to(#107fff)
+                );
+                background: linear-gradient(180deg, #25b6ff, #107fff);
+                border-radius: 3px;
+                position: absolute;
+                left: 0;
+                top: 13px;
+                }
+            }
+            .message__more {
+                margin-left: auto;
+                font-size: 14px;
+                color: #8893a7;
+                cursor: pointer;
+                -webkit-transition: color 0.2s;
+                transition: color 0.2s;
+            }
+            .work-list__content {
                 display: -webkit-box;
                 display: -ms-flexbox;
                 display: flex;
-                -webkit-box-align: center;
-                -ms-flex-align: center;
-                align-items: center;
-                position: relative;
-                font-size: 50px;
-                font-weight: 500;
-                color: #304265;
-                -webkit-transition: color 0.2s 0.05s;
-                transition: color 0.2s 0.05s;
+                -webkit-box-pack: justify;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+                padding: 33px 36px;
+                height: calc(100% - 56px);
+                min-height: 238px;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                list-style: none;
+                margin: 0;
+                // padding: 0;
+                padding: 10px 40px;
+                .to_do_list {
+                    // border: 1px solid;
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -webkit-box-orient: vertical;
+                    -webkit-box-direction: normal;
+                    -ms-flex-direction: column;
+                    flex-direction: column;
+                    -webkit-box-align: center;
+                    -ms-flex-align: center;
+                    align-items: center;
+                    -webkit-box-pack: center;
+                    -ms-flex-pack: center;
+                    justify-content: center;
+                    width: 28%;
+                    border-radius: 6px;
+                    background-color: #fff;
+                    cursor: pointer;
+                    -webkit-transition: all 0.2s ease;
+                    transition: all 0.2s ease;
 
-                &:hover{
-                color: #107fff;
+
+                    &:hover {
+                        background-color: #f7fafc;
+                        .todo__title {
+                        background: #fff;
+                        color: #107fff;
+                        -webkit-box-shadow: 0 0 8px 0 #e6edfd;
+                        box-shadow: 0 0 8px 0 #e6edfd;
+                    }
+                }
+                .todo__title {
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -webkit-box-pack: center;
+                    -ms-flex-pack: center;
+                    justify-content: center;
+                    -webkit-box-align: center;
+                    -ms-flex-align: center;
+                    align-items: center;
+                    width: 65%;
+                    min-width: 74px;
+                    max-width: 150px;
+                    height: 32px;
+                    margin: 0 0 18px 0;
+                    font-size: 16px;
+                    border-radius: 16px;
+                    background: #f7fafc;
+                    -webkit-box-shadow: 0 0 0 0 #e6edfd;
+                    box-shadow: 0 0 0 0 #e6edfd;
+                    color: #8893a7;
+                    -webkit-transition: all 0.2s ease 0.05s;
+                    transition: all 0.2s ease 0.05s;
+                }
+                .todo__count {
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -webkit-box-align: center;
+                    -ms-flex-align: center;
+                    align-items: center;
+                    position: relative;
+                    font-size: 50px;
+                    font-weight: 500;
+                    color: #304265;
+                    -webkit-transition: color 0.2s 0.05s;
+                    transition: color 0.2s 0.05s;
+
+                    &:hover{
+                    color: #107fff;
+                    }
+                }
                 }
             }
+        }
+        .el-col {
+            height: 100%;
+            border-radius: 6px;
+        }
+        .bg-purple {
+            background-color: #fff;
+            border-radius: 4px;
+            height: 100%;
+            border: 1px solid #304265;
+        }
+        .grid-content {
+            border-radius: 4px;
+            // min-height: 36px;
+            margin-top:0px;
+            // margin-bottom:50px;
+            height: 100%;
+            border-color:white;
+            box-shadow: 0 1.5px 8px 0 #e0e5f0;
+        }
+    }
+    body > .el-container {
+        margin-bottom: 40px;
+    }
+    .newAppDialog {
+        .el-form-item {
+            margin-left:35px;
+        }
+        .el-input {
+            margin-left:0px;
+            width:300px;;
+        }
+        .el-select {
+            width:300px;
+            .el-option {
+                width:20%;
+                margin:10px;
+                .svg-icon{
+                    size:70px;
+                }
             }
         }
     }
-    .el-col {
-        height: 100%;
-        border-radius: 6px;
-    }
-    .bg-purple {
-        background-color: #fff;
-        border-radius: 4px;
-        height: 100%;
-        border: 1px solid #304265;
-    }
-    .grid-content {
-        border-radius: 4px;
-        // min-height: 36px;
-        margin-top:0px;
-        // margin-bottom:50px;
-        height: 100%;
-        border-color:white;
-        box-shadow: 0 1.5px 8px 0 #e0e5f0;
-    }
-}
-body > .el-container {
-    margin-bottom: 40px;
-}
-// .preview {
-//     float: right;
-//     position: absolute;
-//     bottom: 0;
-//     left: 30%;
-// }
 }
 </style>

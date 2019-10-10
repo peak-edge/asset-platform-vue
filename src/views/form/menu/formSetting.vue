@@ -1,6 +1,6 @@
 <template>
     <div id="formSetting">
-        444444444
+        表单设置
     </div>
 </template>
 

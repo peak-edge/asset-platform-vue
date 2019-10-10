@@ -330,33 +330,6 @@ export default {
             else
                 this.$message.error("该条数据错误")
 		},
-        // //删除方法
-		// deleteAllMethods() {
-		// 	var Params = {
-		// 		ids: this.ids
-		// 	}
-        //     var Params2 ={
-        //         Authorization: this.$store.state.user.token
-        //     }
-        //     console.log(Params)
-        //     this.$ajax({
-        //         url:'/dev-api/sys/role/remove',
-        //         method: 'post',
-        //         contentType: "application/json; charset=utf-8",
-        //         params: Params,
-        //         headers: Params2
-        //     }).then( res => {
-		// 		console.log(res)
-		// 		if(res.data.status==200) {
-		// 			this.$message.success("删除平台角色成功")
-		// 			this.getFlowModelList()
-		// 		}
-		// 		else
-		// 			this.$message.error(res.data.msg)
-        //     }).catch( error => {
-        //         console.log()
-        //     })
-        // },
         //table的双色条纹
         tableRowClassName({row, rowIndex}) {
             if (rowIndex === 1) {
@@ -389,88 +362,6 @@ export default {
             var month = year.getMonth()+1
             return year.getFullYear()+'-'+month+'-'+year.getDate()+' '+year.getHours()+':'+year.getMinutes()+':'+year.getSeconds();
         },
-
-        //第一个dialog对话框----------------------------------------------------------------------------------------------------
-		// closeDialog(form) {
-		// 	this.$refs[form].resetFields();
-		// 	this.disabled = false
-		// },
-		// //InputNumber 计数器方法
-		// handleChange(value) {
-		// 	console.log(value);
-		// },
-		// //新增或编辑字典
-		// addDictionary(form) {
-        //     this.$refs[form].validate((valid) => {
-        //         if (valid) {
-        //             if(this.rowinfo.id==0) {
-        //                 var Params = {
-        //                     id: 0,
-        //                     isDeleted: 0,
-        //                     roleName: this.form.roleName,
-        //                     roleNameZh: this.form.roleNameZh,
-        //                     sort: this.form.sort
-        //                 }
-        //                 var Params2 ={
-        //                     Authorization: this.$store.state.user.token
-        //                 }
-        //                 console.log(Params)
-        //                 this.$ajax({
-        //                     url:'/dev-api/sys/role/submit',
-        //                     method: 'post',
-        //                     contentType: "application/json; charset=utf-8",
-        //                     data: Params,
-        //                     headers: Params2
-        //                 }).then( res => {
-        //                     console.log(res)
-        //                     if(res.data.status==200) {
-        //                         this.$message.success("新增平台角色成功")
-        //                         this.dialogFormVisible = false
-        //                         this.getFlowModelList()
-        //                     }
-        //                     else
-        //                         this.$message.error(res.data.msg)
-        //                 }).catch( error => {
-        //                     console.log()
-        //                 })
-        //             }
-        //             else {
-        //                 var Params = {
-        //                     id: this.rowinfo.id,
-        //                     isDeleted: 0,
-        //                     roleName: this.form.roleName,
-        //                     roleNameZh: this.form.roleNameZh,
-        //                     sort: this.form.sort
-        //                 }
-        //                 var Params2 ={
-        //                     Authorization: this.$store.state.user.token
-        //                 }
-        //                 console.log(Params)
-        //                 this.$ajax({
-        //                     url:'/dev-api/sys/role/edit',
-        //                     method: 'put',
-        //                     contentType: "application/json; charset=utf-8",
-        //                     data: Params,
-        //                     headers: Params2
-        //                 }).then( res => {
-        //                     console.log(res)
-        //                     if(res.data.status==200) {
-        //                         this.$message.success("编辑平台角色成功")
-        //                         this.dialogFormVisible = false
-        //                         this.getFlowModelList()
-        //                     }
-        //                     else
-        //                         this.$message.error(res.data.msg)
-        //                 }).catch( error => {
-        //                     console.log()
-        //                 })
-        //             }
-        //         } else {
-        //             this.$message.error("请检查输入规范")
-        //             return false;
-        //         }
-        //     });
-        // },
     }
 }
 </script>

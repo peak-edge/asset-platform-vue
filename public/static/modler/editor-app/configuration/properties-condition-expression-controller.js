@@ -29,7 +29,7 @@ angular.module('flowableModeler').controller('FlowableConditionExpressionCtrl', 
 
 angular.module('flowableModeler').controller('FlowableConditionExpressionPopupCtrl',
     ['$scope', '$q', '$translate', '$timeout', function ($scope, $q, $translate, $timeout) {
-    	$scope.property.value.formProperties=[]
+
      // Put json representing form properties on scope
         if ($scope.property.value !== undefined && $scope.property.value !== null
             && $scope.property.value.formProperties !== undefined
@@ -41,7 +41,7 @@ angular.module('flowableModeler').controller('FlowableConditionExpressionPopupCt
             for (var i = 0; i < $scope.formProperties.length; i++) {
                 var formProperty = $scope.formProperties[i];
                 if (formProperty.enumValues && formProperty.enumValues.length > 0) {
-                    for (var j = 0; j < formProperty.enumValues.length; j++) {
+                    for (var j = 0; j < formProperty.enumValues.length; j++){
                         var enumValue = formProperty.enumValues[j];
                         if (!enumValue.id && !enumValue.name && enumValue.value) {
                             enumValue.id = enumValue.value;
@@ -127,13 +127,7 @@ angular.module('flowableModeler').controller('FlowableConditionExpressionPopupCt
 
         // Handler for when the value of the type dropdown changes
         $scope.propertyTypeChanged = function () {
-
-            // Check date. If date, show date pattern
-            if ($scope.selectedProperty.type === 'date') {
-                $scope.selectedProperty.datePattern = 'MM-dd-yyyy hh:mm';
-            } else {
-                delete $scope.selectedProperty.datePattern;
-            }
+       
 
             // Check enum. If enum, show list of options
             if ($scope.selectedProperty.type === 'enum') {
@@ -148,24 +142,59 @@ angular.module('flowableModeler').controller('FlowableConditionExpressionPopupCt
                 $scope.enumValues.length = 0;
             }
         };
-
+            function dubRemove(arr){
+                        let res=[];
+                        let repeat=[];
+                        for(let i=0;i<arr.length;i++){
+                            let name=arr[i].name;
+                            if(!repeat[name]){
+                                res.push(arr[i]);
+                                repeat[name]=1
+                            }
+                        }
+                        return res;
+                }
         // Click handler for add button
                var propertyIndex = 1;
-        $scope.addNewProperty = function () {
-            var newProperty = {
-                id: 'new_property_' + propertyIndex++,
-                name: '',
-                type: 'string',
-                readable: true,
-                writable: true
-            };
+    
+             function dubRemove(arr){ //数组去重
+                let res=[]; 
+                let repeat=[];
+                for(let i=0;i<arr.length;i++){
+                    let formItemKey=arr[i].key;
+                    if(!repeat[formItemKey]){
+                        res.push(arr[i]);
+                        repeat[formItemKey]=1
+                    }else{
+                      for(let k=0;k<i;k++){
+                        if((arr[k].key)==formItemKey){
+                            res.splice(arr[k],1);//删除数组中某一项
+                        }
+                      }
+                       res.push(arr[i]);
+                       repeat[formItemKey]=1
+                    }
+                }
+                return res;
+        }
+             for(var i=0;i<listObj.length;i++){
+  
+                var newProperty={
+                    id:propertyIndex++,
+                    name:listObj[i].name,
+                    key:listObj[i].model,
+                    type1:listObj[i].type1,
+                    rules:listObj[i].rulesType
+                }     
+             $scope.formProperties.push(newProperty);
+  
+               
+            }
 
-            $scope.formProperties.push(newProperty);
-
-            $timeout(function () {
+            $timeout(function (){
                 $scope.gridApi.selection.toggleRowSelection(newProperty);
             });
-        };
+       
         // Click handler for remove button
         $scope.removeProperty = function () {
             var selectedItems = $scope.gridApi.selection.getSelectedRows();
@@ -297,24 +326,47 @@ angular.module('flowableModeler').controller('FlowableConditionExpressionPopupCt
         };
 
         // Click handler for save button
+        var arrs=[];
         $scope.save = function () {
-
-            if ($scope.formProperties.length > 0) {
+            console.log($scope.formProperties)
+            for(var i=0;i<$scope.formProperties.length;i++){
+                if($scope.formProperties[i].type){
+                 
+                    arrs.push($scope.formProperties[i]);
+                }
+            }
+            $scope.formProperties=arrs;
+     
+      
+                if ($scope.formProperties.length ==1) {
                 $scope.property.value = {};
                 $scope.property.value.formProperties = $scope.formProperties;
-            } else {
-                $scope.property.value = null;
-            }
+                } else if($scope.formProperties.length>1){
+                    alert('每个节点只能保存一个条件')
+                    $scope.property.value = null;
+                }
 
-            $scope.updatePropertyInModel($scope.property);
-            $scope.close();
+                $scope.updatePropertyInModel($scope.property);
+                $scope.close();
+           
+            
         };
 
         $scope.cancel = function (){
+
             $scope.$hide();
             $scope.property.mode = 'read';
         };
+       $scope.reset=function(){
+     
+         $scope.property.value=null;
+        for(var i=0;i<$scope.formProperties.length;i++){
+            delete  $scope.formProperties[i].type
+            delete  $scope.formProperties[i].variable
+        }
+                
 
+       }
         // Close button handler
         $scope.close = function () {
             $scope.$hide();

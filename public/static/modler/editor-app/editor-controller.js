@@ -421,7 +421,7 @@ angular.module('flowableModeler')
         const lan='#387EC2';
         const huang='#CD950C';
         const fen='#FFB6C1';
-        let svgStr1=`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+          let svgStr1=`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"
@@ -541,24 +541,7 @@ let svgStr2=`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
     </g>
   </g>
 </svg>`
-     // var listobj=[
-     //                {name:'creat1package',properties:[{"id":"creat1","name":'visible','value':false,'type':'Boolean','title':'可见','popular':true},{"id":"creat2","name":'require','value':false,'type':'Boolean','title':'可见','popular':true}]},
-     //            ]
-           
-      //       var listobj=[
-      //           {name:'厂家如1',visible:false,wirte:false,require:false,"type":"Boolean"},
-      //           {name:'厂家如2',visible:false,wirte:false,require:false,"type":"Boolean"},
-      //           {name:'厂家如3',visible:false,wirte:false,require:false,"type":"Boolean"},
-      //           {name:'厂家如4',visible:false,wirte:false,require:false,"type":"Boolean"},
-      //      ]    
-      // response.data.propertyPackages.push({'name':'authorityPackage','properties':[{ "id":"可见",'value':false,"title":"可见","description":"这是用户权限",
-      //                "popular":true,'type':'complex'},{ "id":"可写",'value':false,"title":"可写","description":"这是用户权限",
-      //                "popular":true}]})
 
-       // for(var i=0;i<listobj.length;i++){
-       //      response.data.propertyPackages.push({'name':listobj[i].name,'properties':listobj[i].properties})
-       //      response.data.stencils[6].propertyPackages.push(listobj[i].name)
-       // }
        console.log(response.data.propertyPackages)
        console.log('6='+response.data.stencils[6].propertyPackages)
     // response.data.stencils[7]=response.data.stencils[6]
@@ -578,7 +561,15 @@ let svgStr2=`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
     response.data.stencils[8].title='抄送节点'
     response.data.stencils[8].view=svgStr2 
     response.data.stencils[8].propertyPackages=response.data.stencils[6].propertyPackages;
-   
+    response.data.stencils[7].propertyPackages.push('servicetaskdelegateexpressionpackage');
+    response.data.stencils[7].propertyPackages.push('servicetaskclasspackage');
+    response.data.stencils[7].propertyPackages.push('multiinstance_typepackage');
+    response.data.stencils[7].propertyPackages.push('servicetaskexpressionpackage');
+
+     response.data.stencils[8].propertyPackages.push('servicetaskdelegateexpressionpackage');
+    response.data.stencils[8].propertyPackages.push('servicetaskclasspackage');
+    response.data.stencils[8].propertyPackages.push('multiinstance_typepackage');
+    response.data.stencils[8].propertyPackages.push('servicetaskexpressionpackage');
 
        for(let i=0;i<response.data.stencils.length;i++){
             if(!response.data.stencils[i].index){
@@ -587,14 +578,15 @@ let svgStr2=`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
        }
        for( let i=0;i< response.data.propertyPackages.length;i++ ){
            
-         if(response.data.propertyPackages[i].name=='orgspackage'){
-                        response.data.propertyPackages[i].properties[0].title='机构'
+      
+         if(response.data.propertyPackages[i].name=='rolespackage'){
+                        response.data.propertyPackages.splice(i,1)
          }
          if(response.data.propertyPackages[i].name=='duedatedefinitionpackage'){
                         response.data.propertyPackages[i].properties[0].title='完成时间'
          }
         if(response.data.propertyPackages[i].name=='multiinstance_conditionpackage'){
-                        response.data.propertyPackages[i].properties[0].title='是否签到'
+                        response.data.propertyPackages[i].properties[0].title='是否会签'
                         response.data.propertyPackages[i].properties[0].type='Boolean'
          }
          if(response.data.propertyPackages[i].name=='multiinstance_cardinalitypackage'){
@@ -629,24 +621,9 @@ let svgStr2=`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
                         response.data.propertyPackages.splice(i,1)
                   
          }
-         // if(response.data.propertyPackages[i].name=='multiinstance_typepackage'){
-         //                response.data.propertyPackages.splice(i,1)
-                 
-         // }
-         // if(response.data.propertyPackages[i].name=='multiinstance_variablepackage'){
-         //                response.data.propertyPackages.splice(i,1)
-         // }
-         // if(response.data.propertyPackages[i].name=='multiinstance_variablepackage'){
-         //                response.data.propertyPackages.splice(i,1)
-                  
-         // }
-//multiinstance_cardinality 实例数
-//multiinstance_collection 集合
-//multiinstance_variable 成员数
-//
-             // if(response.data.propertyPackages.properties.title=='组织'){
-             //        response.data.propertyPackages.properties.title='机构'
-             // }
+            if(response.data.propertyPackages[i].name=='orgspackage'){
+                        response.data.propertyPackages.splice(i,1)
+         }
        }
   
  		var baseUrl = "http://b3mn.org/stencilset/";

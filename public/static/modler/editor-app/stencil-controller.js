@@ -11,7 +11,7 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
        var vae=true;//标记flag什么时候开始变化
        var vae2=false //标记点击快捷工具箱的时候count是否发生变化
        var dataArr=[];//存放本流程中的所有表单权限
-       $scope.dataArr1=[];
+      
 
    //刚渲染完毕进行绑定判断
            var formId;
@@ -20,7 +20,8 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
             type:'GET',
             url:`/modler/proc_model/bind_form_model?proc_model_id=${editorManager.getModelId()}`,
             success:function(result){
-              if(result.status==500){ //没有绑定表单
+              console.log(result)
+              if(result.code==500||result.code==400){ //没有绑定表单
                 jQuery('#myModal').modal('show');
                 jQuery.ajax({
                   type:'GET',
@@ -39,14 +40,21 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
                   url:`/modler/proc_model/bind_form_model?proc_model_id=${editorManager.getModelId()}`,
                   success:function(rets){
                       var ret=JSON.parse(rets.obj)
-                      for(var i=0;i<ret.list.length;i++){
+                      console.log(ret)
+
+                      for(var i=0;i<ret.list.length;i++){                
                           var listItem={
                               name:ret.list[i].name,
-                              key:ret.list[i].key
-                          }
+                              key:ret.list[i].key,
+                              model:ret.list[i].model,
+                              type1:ret.list[i].type,
+                              rulesType:ret.list[i].rules[0]
+                           }
+
                           listObj.push(listItem);
                       }
-                       console.log(listObj)  
+                      console.log(listObj)
+  
                   },
                   error:function(ret){
                     console.log(ret)
@@ -75,12 +83,16 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
                             success:function(rets){
 
                                 var ret=JSON.parse(rets.obj)
-                                console.log(ret)
+                        
                                 for(var i=0;i<ret.list.length;i++){
                                     var listItem={
                                         name:ret.list[i].name,
-                                        key:ret.list[i].key
+                                        key:ret.list[i].key,
+                                        model:ret.list[i].model,
+                                        type1:ret.list[i].type,
+                                        rulesType:ret.list[i].rules[0]
                                     }
+                                    console.log(listItem)
                                     listObj.push(listItem);
 
                                 }
@@ -158,7 +170,7 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
         var quickMenuItems = []; //工具箱里面的快捷键
 
         var morphRoles = [];
-        for (var i = 0; i < data.rules.morphingRules.length; i++) {
+        for (var i = 0; i < data.rules.morphingRules.length; i++){
                 var role = data.rules.morphingRules[i].role;
                 var roleItem = { 'role': role, 'morphOptions': [] };
                 morphRoles.push(roleItem)
@@ -175,9 +187,7 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
         jQuery.each(FLOWABLE.PROPERTY_GROUP_CONFIG, function (i, group) {
           jQuery.each(group.items, function (j, item) {
             groupMaps[item] = { id: group.id, name: group.name, order: group.order };
-
             //id: "basic",name: "PROPERTY.GROUP.BASIC",order: 1
-    
           })
         })//属性分组id、名称、次序
 
@@ -327,6 +337,7 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
          }
        for (let it of stencilItemGroups[1].items){ //活动
                if(it.index==6||it.index==7||it.index==8){
+                console.log(stencilItemGroups[1].items)
                 it.visible=true;
                }
          }
@@ -384,6 +395,7 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
           //点击控件时候发生的变化
           var shapes=event.elements;
           var canvasSelected = false;
+      
           if (shapes && shapes.length == 0){  //当没有选择任何控件时候选择画布
               shapes = [editorManager.getCanvas()];
               canvasSelected = true;
@@ -392,7 +404,12 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
               var selectedShape = shapes.first();            
               var stencil = selectedShape.getStencil();
 
+
+
  
+          if(shapes[0]&&stencil.title()=='连线'){
+                 //选择了连线控件，resourceId是线的id值
+          }
    
             if ($rootScope.selectedElementBeforeScrolling && stencil.id().indexOf('BPMNDiagram') !== -1 && stencil.id().indexOf('CMMNDiagram') !== -1) {
               // ignore canvas event because of empty selection when scrolling stops
@@ -427,16 +444,16 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
 
             // Gather properties of selected item
             var properties = stencil.properties();//右边属性值
-            if(flag||vae2){ //只有flag为true时候才进行标记的变化
-                  count++;
-                  selectedShape.properties._object['oryx-overrideid']='a'+count;
-                  flag=false;
-                  vae2=false
-           }
-      
-   
+           //  if(flag){ //只有flag为true时候才进行标记的变化
+           //        count++;
+           //        selectedShape.properties._object['oryx-overrideid']=editorManager.getModel().childShapes[editorManager.getModel().childShapes.length-1].resourceId;
+           //        flag=false;
+           //        // vae2=false
+           // }
+            console.log(selectedShape)
+
             if(!selectedShape.properties._object['oryx-overrideid']){
-              selectedShape.properties._object['oryx-overrideid']='a'+0
+              selectedShape.properties._object['oryx-overrideid']=selectedShape.resourceId
             }
             for (var i = 0; i < properties.length; i++) {
               var property = properties[i];
@@ -773,14 +790,14 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
         };
 
         $scope.quickAddItem = function (newItemId) { //点击工具箱控件时候发生的变化
-           
+           flag=true;
           $scope.safeApply(function () {
        
-            if(newItemId=='SequenceFlow'||newItemId=='Association'||newItemId=='TextAnnotation'){
-              vae2=false
-            }else{
-              vae2=true;
-            }
+            // if(newItemId=='SequenceFlow'||newItemId=='Association'||newItemId=='TextAnnotation'){
+            //   vae2=false
+            // }else{
+            //   vae2=true;
+            // }
 
             var shapes = editorManager.getSelection();
             if (shapes && shapes.length == 1) {
@@ -933,23 +950,25 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
             
            var singleItem={}
             for(var i=0;i<formprop.length;i++){  //保存每个节点的id值
-                  var auth=2
-                  if(!formprop[i].readable){
+                  var auth=3
+                  console.log(formprop[i])
+                  if(formprop[i].writable==1){
                       auth=1;
                   }
-                   if(formprop[i].readable&&!formprop[i].writable){
+                   if(formprop[i].writable==2){
                       auth=2;
                   }
-                  if(formprop[i].readable&&formprop[i].writable){
+                  if(formprop[i].writable==3){
                       auth=3;
                   }
-                  if(formprop[i].required){
+                  if(formprop[i].writable==4){
                       auth=4;
                   }
-                       var singleItem={'act_id':property.id,"form_item_key":formprop[i].key,"authority":auth}
+              var singleItem={'act_id':property.id,"form_item_key":formprop[i].key,"authority":auth}
                        dataArr.push(singleItem)
             }
             $scope.dataArr1=dubRemove(dataArr)
+            console.log(dataArr)
           }
           // Switch the property back to read mode, now the update is done
           property.mode = 'read';
@@ -1262,9 +1281,9 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
 
       $scope.startDragCallbackQuickMenu = function (event, ui) {
           console.log(event)
-        if(event.currentTarget.id=='SequenceFlow'||event.currentTarget.id=='Association'||event.currentTarget.id=='TextAnnotation'){
-          vae=false
-        }
+        // if(event.currentTarget.id=='SequenceFlow'||event.currentTarget.id=='Association'||event.currentTarget.id=='TextAnnotation'){
+        //   vae=false
+        // }
         $scope.dragModeOver = false;
         $scope.quickMenu = true;
       };
@@ -1488,7 +1507,7 @@ angular.module('flowableModeler')  //这里的变量editor.html中左边控制�
       };
 
       $scope.dragCallbackQuickMenu = function (event, ui){
-
+          flag=true;
         if ($scope.dragModeOver != false) {
           var coord = editorManager.eventCoordinatesXY(event.pageX, event.pageY);
 

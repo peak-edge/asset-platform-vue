@@ -91,7 +91,8 @@ angular.module('flowableModeler').controller('FlowableDecisionTableReferencePopu
                 $scope.property.value = {
                     'id': $scope.selectedDecisionTable.id,
                     'name': $scope.selectedDecisionTable.name,
-                    'key': $scope.selectedDecisionTable.key
+                    'key': $scope.selectedDecisionTable.key,
+                    'model':$scope.selectedDecisionTable.model
                 };
                 $scope.updatePropertyInModel($scope.property);
 

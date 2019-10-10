@@ -131,14 +131,14 @@ export default {
                     params: Params2
                 }).then( res => {
                     console.log(res)
-                    if(res.data.status==200) {
-                        console.log(res.data.obj)
+                    if(res.data.code==200) {
+                        // console.log(res.data.obj)
                         this.$message.success("注册成功");
                         // 注册用户激活
                         var Params3 = {
                             // auditType: 1,
-                            sceneId: res.data.obj.sceneIds,
-                            userId: res.data.obj.userId
+                            sceneId: res.data.data.sceneIds,
+                            userId: res.data.data.userId
                         }
                         var Params4 = {
                             Authorization: "Bearer "+ this.$refs.msg.nowAuth,
@@ -152,7 +152,7 @@ export default {
                             headers: Params4
                         }).then( res => {
                             console.log(res)
-                            if(res.data.status==200) {
+                            if(res.data.code==200) {
                                 this.$message.success("注册用户激活成功")
                                 this.$confirm('是否跳转至登录界面?', '注册成功', {
                                     confirmButtonText: '确定',

@@ -20,7 +20,7 @@
                 </el-col>
                 <el-col :span="1">&nbsp;</el-col>
                 <el-col :span="5">
-                    <span>接收时间</span>
+                    <span>实例发起时间</span>
                     <div class="vertical-divider" style="float:right"></div>
                 </el-col>
                 <el-col :span="3.5">
@@ -39,7 +39,7 @@
                     </el-col>
                     <el-col :span="0.5">&nbsp;</el-col>
                     <el-col :span="9">
-                        <span>{{item.id}}</span><br>
+                        <span>{{item.content}}</span><br>
                         <span style="color:orange;line-height:2">{{item.nodeType}}</span>
                     </el-col>
                     <el-col :span="1">&nbsp;</el-col>
@@ -53,7 +53,7 @@
                     </el-col>
                 </el-row>
             </el-card>
-            <div class="addPage" :hidden="dialogVisible" style="overflow:scroll; ">
+            <div class="addPage" :hidden="dialogVisible" style="z-index:9999">
                 <span style="float:left;line-height:3.2;font-size:16px;padding-left:20px;">使用说明</span>
                 <div class="navbar-header">
                     <el-button @click="dialogVisible = true"><i class="el-icon-close"></i><span>关闭</span></el-button>
@@ -61,7 +61,7 @@
                         <svg-icon :icon-class="item.iconCls"/><span>{{item.name}}</span>
                     </el-button> -->
                 </div>
-                <div class="main" style="padding:40px;">
+                <div class="main" style="padding:40px;overflow-y:scroll;height:89vh">
                     <fm-generate-form
                         :data="jsonData"
                         :remote="remoteFuncs"
@@ -172,7 +172,7 @@ export default {
             this.getKey(item);
             console.log(item)
             var Params = {
-                editor: this.$store.state.user.realName,
+                editor: this.$store.state.user.userId,
                 form_inst_id: this.clickitem.id,
                 form_model_id: this.clickitem.formModelId,
                 proc_inst_id: this.clickitem.procInstId,
@@ -185,7 +185,7 @@ export default {
                 contentType: "application/json; charset=utf-8",
                 data: Params
             }).then( res => {
-                if(res.data.status == 200) {
+                if(res.data.code == 200) {
                     this.$message({
                         type: 'success',
                         message: '已阅成功',
