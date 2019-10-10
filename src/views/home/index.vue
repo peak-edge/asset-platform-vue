@@ -10,7 +10,8 @@
                 size="small">
             </el-input>
             <!-- 右侧 user-->
-            <span class="username" @click="toReg()">{{$store.state.user.realName}}</span>
+            <span class="username"  @click="toReg()"> 
+             <i class='el-icon-user-solid'></i></span>
             <!-- 右侧 应用工厂-->
             <el-tooltip
                 effect="dark"
@@ -238,6 +239,7 @@
 import { mapGetters } from 'vuex'
 import { options } from '@/icons/icon.json'
 // import imgUrl from "@/assets/404_images/404.png"
+var accountName;
 export default {
     name: 'Dashboard',
     inject:['reload'],
@@ -286,8 +288,20 @@ export default {
     },
     mounted () {
         this.$nextTick( function(){
-            this.handleLogin()
-        
+                          var Params = {
+                                accountName: 'chenxu',
+                                pwd: '123'
+                            }
+                     
+                    this.$ajax({
+                        url:'/dev-api/login',
+                        method: 'post',
+                        contentType: "application/json; charset=utf-8",
+                        data:Params
+                    }).then( res => {
+                        // console.log('headers='+JSON.stringify(res.headers))
+                        this.handleLogin(res.accoutName)
+                    })
 
             // this.getAllMenus(1)
         })
@@ -357,20 +371,22 @@ export default {
             this.currentPage2 = val
             this.getSceneByUser()
         },
-        handleLogin() {
+        handleLogin(name) {
 
-                    var Params = {
-                        accountName: 'chenxu',
-                        pwd: '123'
-                    }
+                    // var Params = {
+                    //     accountName: 'chenxu',
+                    //     pwd: '123'
+                    // }
         
                     this.$ajax({
                         url:'/dev-api/login',
                         method: 'post',
                         contentType: "application/json; charset=utf-8",
-                        data: Params
+                        data:{accountName:name,pwd:'123'}
                     }).then( res => {
+                        console.log('res='+res.header)
                         if(res.data.code == 200) {
+
                             console.log("1")
                             this.$store.state.user.token = res.data.data.Authorization
                             console.log("2")
@@ -382,7 +398,7 @@ export default {
                             console.log("4")
 
                             this.$store.state.user.realName = res.data.data.realName
-                            console.log("5")
+                            console.log(this.$store.state.user.realName)
 
                             this.$store.state.user.loadScene = []
                             console.log("6")
