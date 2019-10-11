@@ -439,7 +439,7 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
                 var CUR_SECTION=''
                 var startPerson=''
                 var startBus=''
-                var orgsArr=[];
+                var orgsArrs=[];
                 var usersArr=[];
                 for(var i=0;i<needDate.childShapes.length;i++){
                     var property=needDate.childShapes[i].properties;
@@ -449,48 +449,23 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
                         roles=property.roles.userids.split(",").join('|');
                     }
                     if(property.users){
-                        if(property.users.usernames.search('发起人')){
-                            INTATOR='INTATOR'
-                        }
-                        if(property.users.usernames.search('所属部门')){
-                            CUR_SECTION='CUR_SECTION'
-                        }
-                         if(INTATOR){
-                            startPerson='INTATOR'
-                        }else{
-                            startPerson=''
-                        }
-
-
-                         if(CUR_SECTION){
-                            startBus='CUR_SECTION'
-                        }else{
-                             startBus=''
-                        }
-                        property.users.userids=property.users.userids.replace(/,INTATOR/g,'');
-                        property.users.userids=property.users.userids.replace(/,CUR_SECTION/g,'');
-                        users=property.users.usernames.split(",")
                         usersid=property.users.userids.split(",")
-                
-                                // for(var k=0;k<users.length;k++){
-                                //     if(usersid[k]){
-                                //         if(usersid[k].search('@人员')!=-1){ //字符串中是否含有子字符串
-                                //             usersid[k]=usersid[k].replace(/@人员/g,'');
-                                //             usersArr.push(usersid[k])
-                                //         }else{
-                                //             orgsArr.push(usersid[k])
-                                //         }
-                                //     }
+                        console.log(usersid)
+                                for(var k=0;k<usersid.length;k++){
+                                    if(usersid[k]){
+                                        if(usersid[k].search('@人员')!=-1){ //字符串中是否含有子字符串
+                                            usersid[k]=usersid[k].replace(/@人员/g,'');
+                                            usersArr.push(usersid[k])
+                                        }else  if(usersid[k].search('@人员')!==1){
+                                            orgsArrs.push(usersid[k])
+                                        }
+                                    }
                                     
-                                // }
-                                // usersArr=usersArr.join('|');
-                                // orgsArr=orgsArr.join('|');
-                                // console.log(users,usersArr,orgsArr)
+                                }
+                                usersArr=usersArr.join('|');
+                                orgsArrs=orgsArrs.join('|');
+                               console.log(usersArr,orgsArrs)
                       
-                    }
-                    if(property.orgs){
-                     
-                        //groups=property.orgs.orgids.replace(/chenyuchen/g, "CANDIDATE_GROUP_CUR_SECTION").split(",").join('|')
                     }
 
                     if(property.multiinstance_condition){
@@ -519,8 +494,8 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
                                     }
                           },
                         "limit_time": property.duedatedefinition,
-                        "candidate_user":usersArr?(usersArr+startPerson):(usersArr+'|'+startPerson),
-                        "candidate_group": orgsArr?(orgsArr+startBus):(orgsArr+'|'+startBus),
+                        "candidate_user":usersArr,
+                        "candidate_group": orgsArrs,
                         "overtime_strategy": 1,
                         "todo_strategy":" ",
                         "if_joint_sign":isJoin

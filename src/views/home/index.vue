@@ -300,7 +300,7 @@ export default {
                         data:Params
                     }).then( res => {
                         // console.log('headers='+JSON.stringify(res.headers))
-                        this.handleLogin(res.accoutName)
+                        this.handleLogin('chenxu')
                     })
 
             // this.getAllMenus(1)

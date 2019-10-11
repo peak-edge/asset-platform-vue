@@ -224,7 +224,7 @@ var index=1;
     let arr=[];
     let arr2=[];
     let arr3=[];
-    let arr4=[{id:'INTATOR',name:'发起人',pId:0,open:true},{id:'CUR_SECTION',name:'所属部门',pId:0,open:true}]
+    let arr4=[{id:'INTATOR@人员',name:'发起人',pId:0,open:true},{id:'CUR_SECTION',name:'所属部门',pId:0,open:true}]
     //嵌套对象扁平化处理（好难，想了两天┭┮﹏┭┮）                 
       function unflatten2(data){
                         var result = {};
@@ -259,7 +259,6 @@ var index=1;
                             }
                         }
                         recurse(data, "");
-                          arr2.push({id:'CANDIDATE_GROUP_CUR_SECTION',name:'本部门',pId:0,open:true})
                  
                         return arr2;
           }
@@ -278,7 +277,7 @@ var index=1;
                         } else {
                             var isEmpty = true;
                             for (var p in cur) {
-                                isEmpty = false;
+                                    isEmpty = false;
                                    obj={id:cur.id+'@人员',name:cur.realName,pId:0,open:true}
                                 arr.push(obj);
                               
